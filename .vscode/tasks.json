@@ -7,7 +7,7 @@
       "platform": "python",
       "dockerBuild": {
         "tag": "autofacturabacked:latest",
-        "dockerfile": "${workspaceFolder}/Dockerfile",
+        "dockerfile": "${workspaceFolder}/.docker/Dockerfile",
         "context": "${workspaceFolder}",
         "pull": true
       }
