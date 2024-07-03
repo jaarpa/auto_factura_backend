@@ -2,8 +2,16 @@ from typing import Union
 from fastapi import FastAPI, Body, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel 
+import boto3 
+from dotenv import load_dotenv
+import os 
+from botocore.exceptions import NoCredentialsError,ClientError
+import psycopg2 
+from psycopg2 import sql
+#from importlib import reload, import_module
 
 app = FastAPI()
+load_dotenv()
 
 @app.get("/")
 def read_root():
@@ -31,12 +39,91 @@ async def limit_file_size(request,call_next):
     
     return await call_next(request)
 
+# Isolated function to upload file to S3,
+def upload_file_s3(file_path: str,bucket_name: str,subfolder:str) -> str:
+    """
+    Upload file to a subfolder of an s3 bucket and save the key to a PostgreSQL
+    
+    :param file_path: Local path of the file to upload.
+    :param bucket_name: S3 bucket name.
+    :param subfolder: subfolder to save the file.
+    :return: key of the file uploaded to S3.llklkll
+    
+    """
+    s3_client = boto3.client(
+            's3',
+            aws_access_key_id = os.environ.get('aws_access_key_id'),
+            aws_secret_access_key = os.environ.get('aws_secret_access_key'),
+            region_name = os.environ.get('aws_region_name'),
+            )
+    
+    file_name = file_path.split('/')[-1]
+    key = f"{subfolder}/{file_name}" # for the "head_object" method key is equal to object_name
+    
+    try:
+        s3_client.head_object(Bucket=bucket_name, Key=key)
+        print(f'The {file_name} file is already exists in the {bucket_name} bucket')
+        return False
+    except ClientError as e:
+        if e.response['ERROR']['Code'] == '404':
+    
+            try:
+                # Uploadfile
+                s3_client.upload_file(file_path, bucket_name,key)# 
+            
+                # conexión a la base de datos de postgreSQL
+                conn = psycopg2.connect(
+                dbname = "db_receip",
+                user = "gubene",
+                password = "260316@",
+                host = "localhost",
+                port = "5432"
+                )
+                # cursor para ejecutar consultas
+                cur = conn.cursor()
+                # Consulta SQL para insertar el valor generado en la tabla
+                insert_query = sql.SQL("INSERT INTO t_receipt (key_S3) VALUES (%s)")
+                cur.execute(insert_query,[key])
+                conn.commit()
+                print(f"FILE RECEIVED AND KEY SAVED IN THE DATABASE")
+                
+            except FileNotFoundError:
+                print(f"FILE NOT FOUND")
+            except  NoCredentialsError:
+                print(f"CREDENTIALS WERE NOT FOUND")
+            finally:
+                # Cerrar el cursor y la conexión
+                cur.close()
+                conn.close()
+        
+        else:
+            print(f'ERROR VERIFYING THE EXISTENCE OF THE FILE')
+            return False
+
+file_path = 'src/fast_api/prueba.jpg' #Used for testing
+bucket_name = 'rubenstocker26'
+subfolder = 'pruebas'
+
 @app.post("/uploadfile/")
 async def create_upload_file(file:UploadFile = File(...)):
-    if file.content_type not in ALLOWED_FILE_TYPE:
-        raise HTTPException(status_code=400, detail= "Tipo de archivo no permitido. Solo se admite JPEG")
+    try:
+        if file.content_type not in ALLOWED_FILE_TYPE:
+            raise HTTPException(status_code=400, detail= "Tipo de archivo no permitido. Solo se admite JPEG")
+        
+        else:
+        # contents = await file.read()
+        # print(f"Archivo recivido: {file.filename}, tamaño: {len(contents)} bytes")
+            file_location = f"/tmp/{file.filename}"
+            with open(file_location,'wb') as f:
+                f.write(file.file.read())
+            
+            #Upload file to S3
+            upload_file_s3(file_location,bucket_name,subfolder)
+            
+            return {"filename": file.filename}
     
-    contents = await file.read()
-    print(f"Archivo recivido: {file.filename}, tamaño: {len(contents)} bytes")
-    
-    return {"filename": file.filename}
+    finally:
+        #Delete temporaly file 
+        if os.path.exists(file_location):
+            os.remove(file_location)
+
