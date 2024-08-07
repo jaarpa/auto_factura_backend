@@ -46,7 +46,7 @@ services:
       RABBITQM_DEFAULT_PASSWORD: "guest"
     volumes:
       - rabbitqm_data:/var/lib/rabbitqm
-
+  
 
 volumes:
   postgres_data:

@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "applicationInfo": {
+    "description": "App para automatizar las facturas\n",
+    "name": "autofactura"
+  },
+  "architecture": {},
+  "dataflow": {},
+  "assumptions": [],
+  "mitigations": [],
+  "assumptionLinks": [],
+  "mitigationLinks": [],
+  "threats": []
+}

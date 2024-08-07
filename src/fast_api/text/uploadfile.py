@@ -1,45 +1,17 @@
-from typing import Union
-from fastapi import FastAPI, Body, File, UploadFile, HTTPException
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel 
 import boto3 
 from dotenv import load_dotenv
 import os 
-from botocore.exceptions import NoCredentialsError,ClientError
+from botocore.exceptions import NoCredentialsError, ClientError
 import psycopg2 
 from psycopg2 import sql
-#from importlib import reload, import_module
+from fastapi import FastAPI, File, UploadFile, HTTPException
 
-app = FastAPI()
 load_dotenv()
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+file_path = 'src/fast_api/img3.jpg'
+bucket_name = 'rubenstocker26'
+subfolder = 'pruebas'
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
-
-@app.post("/files/")
-async def create_file(file: bytes= File()):
-    return {"file_size": len(file)}
-
-MAX_FILE_SIZE = 5 * 1048576
-
-ALLOWED_FILE_TYPE = {"image/jpeg", "image/png", "image/jpg"} # cuándo usar el set ...?
-
-@app.middleware("http")
-async def limit_file_size(request,call_next):
-    
-    if request.headers.get("content-length"):
-        content_length = int(request.headers.get("content-length"))
-        if content_length > MAX_FILE_SIZE:
-            return JSONResponse(content={"error":"Archivo demasiado grande."},status_code=413)
-    
-    return await call_next(request)
-
-# Isolated function to upload file to S3,
 def upload_file_s3(file_path: str,bucket_name: str,subfolder:str) -> str:
     """
     Upload file to a subfolder of an s3 bucket and save the key to a PostgreSQL
@@ -47,7 +19,7 @@ def upload_file_s3(file_path: str,bucket_name: str,subfolder:str) -> str:
     :param file_path: Local path of the file to upload.
     :param bucket_name: S3 bucket name.
     :param subfolder: subfolder to save the file.
-    :return: key of the file uploaded to S3.llklkll
+    :return: key of the file uploaded to S3.
     
     """
     s3_client = boto3.client(
@@ -65,13 +37,15 @@ def upload_file_s3(file_path: str,bucket_name: str,subfolder:str) -> str:
         print(f'The {file_name} file is already exists in the {bucket_name} bucket')
         return False
     except ClientError as e:
-        if e.response['ERROR']['Code'] == '404':
+        error_code = e.response['Error']['Code']
+        if error_code == '404':
     
             try:
                 # Uploadfile
                 s3_client.upload_file(file_path, bucket_name,key)# 
             
                 # conexión a la base de datos de postgreSQL
+                ##CONVERTIR A VARIABLES DE ENTORNO EN CASO DE SER NECESARIO.
                 conn = psycopg2.connect(
                 dbname = "db_receip",
                 user = "gubene",
@@ -100,29 +74,7 @@ def upload_file_s3(file_path: str,bucket_name: str,subfolder:str) -> str:
             print(f'ERROR VERIFYING THE EXISTENCE OF THE FILE')
             return False
 
-file_path = 'src/fast_api/prueba.jpg' #Used for testing
-bucket_name = 'rubenstocker26'
-subfolder = 'pruebas'
-
-@app.post("/uploadfile/")
-async def create_upload_file(file:UploadFile = File(...)):
-    try:
-        if file.content_type not in ALLOWED_FILE_TYPE:
-            raise HTTPException(status_code=400, detail= "Tipo de archivo no permitido. Solo se admite JPEG")
         
-        else:
-        # contents = await file.read()
-        # print(f"Archivo recivido: {file.filename}, tamaño: {len(contents)} bytes")
-            file_location = f"/tmp/{file.filename}"
-            with open(file_location,'wb') as f:
-                f.write(file.file.read())
-            
-            #Upload file to S3
-            upload_file_s3(file_location,bucket_name,subfolder)
-            
-            return {"filename": file.filename}
-    
-    finally:
-        #Delete temporaly file 
-        if os.path.exists(file_location):
-            os.remove(file_location)         
+
+file = upload_file_s3(file_path,bucket_name,subfolder)
+
