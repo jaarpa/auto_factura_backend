@@ -47,7 +47,19 @@ services:
     volumes:
       - rabbitqm_data:/var/lib/rabbitqm
   
+  mongodb:
+    image : mongo:5.0
+    container_name: mongo_container
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=gubene
+      - MONGO_INITDB_ROOT_PASSWORD=mongorubius
+    volumes:
+      - mongodata:/data/db
 
+
+# recordar agregar a gitignore los volumenes
 volumes:
   postgres_data:
    name: postgres_data
@@ -56,3 +68,6 @@ volumes:
   rabbitqm_data:
     name: rabbitqm_data
     driver : local
+  mongodata : 
+    name: mongodata
+  
