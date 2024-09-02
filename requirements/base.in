@@ -1,0 +1,5 @@
+fastapi[standard]==0.112.2
+boto3==1.34.92
+SQLAlchemy==2.0.32
+aio-pika==9.4.1
+pillow==10.4.0
