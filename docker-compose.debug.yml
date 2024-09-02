@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.9'
 
 services:
   autofacturabacked:
@@ -10,3 +10,20 @@ services:
     ports:
       - 8000:8000
       - 5678:5678
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin_container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: 1998.ruben26@gmail.com 
+      PGADMIN_DEFAULT_PASSWORD: 260316@a
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  pgadmin_data:
+    name: pgadmin_data

@@ -1,40 +1,54 @@
-version: '3.4'
+version: '3.9'
+
+secrets:
+  postgres-app-passwd:
+    file: .docker/rdbms/secrets/postgres-app-passwd.txt
+  postgres-app-user:
+    file: .docker/rdbms/secrets/postgres-app-user.txt
+  postgres-app-db:
+    file: .docker/rdbms/secrets/postgres-app-db.txt
+  postgres-super-passwd:
+    file: .docker/rdbms/secrets/postgres-super-passwd.txt
+  postgres-superuser:
+    file: .docker/rdbms/secrets/postgres-superuser.txt
+  postgres-default-db:
+    file: .docker/rdbms/secrets/postgres-default-db.txt
 
 services:
-  autofacturabacked:
-    image: autofacturabacked
+  autofacturabackend:
+    image: autofacturabackend
     build:
       context: .
-      dockerfile: ./.docker/Dockerfile
+      dockerfile: .docker/Dockerfile
     ports:
       - 8000:8000
-  
-  db:
-    image: postgres:16.3
-    container_name: postgres_container
-    environment:
-      POSTGRES_USER: gubene
-      POSTGRES_PASSWORD: 260316@
-      POSTGRES_DB: db_receip
+    env_file:
+      - .env
+    secrets:
+      - postgres-app-passwd
+      - postgres-app-user
+      - postgres-app-db
+
+  rdbms:
+    image: postgres:16.4
+    container_name: rdbms
+    env_file:
+      - .env
+    secrets:
+      - postgres-app-passwd
+      - postgres-app-user
+      - postgres-app-db
+      - postgres-super-passwd
+      - postgres-superuser
+      - postgres-default-db
     ports: 
-      - "5432:5432"
+      - ${LOCAL_POSTGRES_PORT}:${POSTGRES_PORT}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
+      - .docker/rdbms/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
+    command: ["-c", "port=${POSTGRES_PORT}"]
     restart: unless-stopped
 
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: pgadmin_container
-    environment:
-      PGADMIN_DEFAULT_EMAIL: 1998.ruben26@gmail.com 
-      PGADMIN_DEFAULT_PASSWORD: 260316@a
-    ports:
-      - "8081:80"
-    depends_on:
-      - db
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-  
   rabbitqm:
     image: rabbitmq:management
     container_name: rabbitqm_container
@@ -61,10 +75,8 @@ services:
 
 # recordar agregar a gitignore los volumenes
 volumes:
-  postgres_data:
-   name: postgres_data
-  pgadmin_data:
-    name: pgadmin_data
+  pg_data:
+   name: pg_data
   rabbitqm_data:
     name: rabbitqm_data
     driver : local

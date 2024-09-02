@@ -10,6 +10,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Install pip requirements
+RUN python -m pip install --upgrade pip
 RUN python -m pip install pip-tools
 COPY requirements/base.in ./requirements.in
 RUN python -m piptools compile ./requirements.in -o requirements.txt
