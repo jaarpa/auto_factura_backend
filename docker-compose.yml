@@ -3,16 +3,8 @@ version: '3.9'
 secrets:
   postgres-app-passwd:
     file: .docker/rdbms/secrets/postgres-app-passwd.txt
-  postgres-app-user:
-    file: .docker/rdbms/secrets/postgres-app-user.txt
-  postgres-app-db:
-    file: .docker/rdbms/secrets/postgres-app-db.txt
   postgres-super-passwd:
     file: .docker/rdbms/secrets/postgres-super-passwd.txt
-  postgres-superuser:
-    file: .docker/rdbms/secrets/postgres-superuser.txt
-  postgres-default-db:
-    file: .docker/rdbms/secrets/postgres-default-db.txt
 
 services:
   autofacturabackend:
@@ -22,25 +14,24 @@ services:
       dockerfile: .docker/Dockerfile
     ports:
       - 8000:8000
+    environment:
+      - APP_PASSWORD_FILE=/run/secrets/postgres-app-passwd
     env_file:
       - .env
     secrets:
       - postgres-app-passwd
-      - postgres-app-user
-      - postgres-app-db
 
   rdbms:
     image: postgres:16.4
     container_name: rdbms
+    environment:
+      - APP_PASSWORD_FILE=/run/secrets/postgres-app-passwd
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres-super-passwd
     env_file:
       - .env
     secrets:
       - postgres-app-passwd
-      - postgres-app-user
-      - postgres-app-db
       - postgres-super-passwd
-      - postgres-superuser
-      - postgres-default-db
     ports: 
       - ${LOCAL_POSTGRES_PORT}:${POSTGRES_PORT}
     volumes:
