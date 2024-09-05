@@ -19,8 +19,10 @@ class Emissor(Base):
 
     __tablename__ = "emissor"
     id: Mapped[UUID] = mapped_column(primary_key=True)
-    name: Mapped[str]
-    label: Mapped[str]
-    description: Mapped[str]
+    name: Mapped[str] = mapped_column()
+    label: Mapped[str] = mapped_column()
+    description: Mapped[str] = mapped_column()
 
-    tickets: Mapped["Ticket"] = relationship(back_populates="emissor")
+    tickets: Mapped[list["Ticket"]] = relationship(
+        back_populates="emissor", default_factory=list
+    )

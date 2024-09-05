@@ -31,4 +31,4 @@ class File(Base):
     document_type: Mapped["DocumentType"] = relationship(
         "DocumentType", back_populates="files"
     )
-    ticket: Mapped["Ticket"] = relationship(back_populates="file")
+    ticket: Mapped["Ticket"] = relationship(back_populates="file", default=None)

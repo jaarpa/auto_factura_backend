@@ -19,8 +19,10 @@ class DocumentType(Base):
 
     __tablename__ = "document_type"
     id: Mapped[UUID] = mapped_column(primary_key=True)
-    name: Mapped[str]
-    label: Mapped[str]
-    description: Mapped[str]
+    name: Mapped[str] = mapped_column()
+    label: Mapped[str] = mapped_column()
+    description: Mapped[str] = mapped_column()
 
-    files: Mapped[list["File"]] = relationship(back_populates="document_type")
+    files: Mapped[list["File"]] = relationship(
+        back_populates="document_type", default_factory=list
+    )
