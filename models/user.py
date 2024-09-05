@@ -14,6 +14,6 @@ class User(Base):
 
     __tablename__ = "user"
     id: Mapped[UUID] = mapped_column(primary_key=True)
-    email: Mapped[str]
+    email: Mapped[str] = mapped_column()
 
     tickets = relationship("Ticket", back_populates="user")

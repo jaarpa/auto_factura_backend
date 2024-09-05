@@ -1,4 +1,5 @@
 from datetime import datetime
+from datetime import UTC
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import MappedAsDataclass
 from sqlalchemy.orm import Mapped
@@ -14,8 +15,13 @@ class Base(MappedAsDataclass, DeclarativeBase):
     """
 
     created_at: Mapped[datetime] = mapped_column(
-        insert_default=func.now()  # pylint: disable=not-callable
+        insert_default=func.now(),  # pylint: disable=not-callable
+        default_factory=lambda: datetime.now(UTC),
+        kw_only=True,
     )
-    updeated_at: Mapped[datetime] = mapped_column(
-        insert_default=func.now(), onupdate=func.now()  # pylint: disable=not-callable
+    updated_at: Mapped[datetime] = mapped_column(
+        insert_default=func.now(),  # pylint: disable=not-callable
+        onupdate=func.now(),  # pylint: disable=not-callable
+        default_factory=lambda: datetime.now(UTC),
+        kw_only=True,
     )
