@@ -1,17 +1,16 @@
+import os
 from uuid import UUID
-from typing import Union
-from fastapi import FastAPI, Body, File, UploadFile, HTTPException
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel 
-import boto3 
+from fastapi import FastAPI, File, UploadFile, HTTPException
+
+# from fastapi import Body
+# from fastapi.responses import JSONResponse
+# from pydantic import BaseModel
+# import boto3
 from dotenv import load_dotenv
-import os 
-from botocore.exceptions import NoCredentialsError,ClientError
+# from botocore.exceptions import NoCredentialsError,ClientError
 # import psycopg2
 # from psycopg2 import sql
 # from importlib import reload, import_module
-from sqlalchemy.orm.session import sessionmaker
-from models import engine
 from shared.infrastructure.alchemy_unit_of_work import AlchemyUnitOfWork
 from shared.infrastructure.alchemy_repository import AlchemyRepository
 from modules.files.domain.entities.file import File as FileEntity
@@ -20,9 +19,9 @@ from modules.files.domain.entities.file import File as FileEntity
 app = FastAPI()
 load_dotenv()
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+# @app.get("/")
+# def read_root():
+#     return {"Hello": "World"}
 
 # @app.get("/items/{item_id}")
 # def read_item(item_id: int, q: Union[str, None] = None):
@@ -139,15 +138,15 @@ async def create_upload_file(file: UploadFile = File(...)):
             config={},
             document_type_id=UUID("a9e39cc9-1749-4da6-b271-cd71cd0481df"),
         )
-        session_factory = sessionmaker(bind=engine)
-        with AlchemyUnitOfWork(session_factory) as uow:
+        with AlchemyUnitOfWork() as uow:
             file_repository = AlchemyRepository[FileEntity](FileEntity, uow.session)
             file_repository.add(uploaded_ticket)
             uow.commit()
 
         return {"filename": file.filename}
-    except:
-        raise HTTPException(status_code=500, detail="Something wrong")
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="Something wrong") from e
 
     finally:
         # Delete temporaly file

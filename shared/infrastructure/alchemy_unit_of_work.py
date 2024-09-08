@@ -3,6 +3,7 @@ from typing import Callable
 
 from sqlalchemy.orm.session import Session
 
+from models import session_factory
 from shared.domain.unit_of_work import UnitOfWork
 
 
@@ -13,9 +14,11 @@ class AlchemyUnitOfWork(UnitOfWork):
 
     session: Session
 
-    def __init__(self, session_factory: Callable[[], Session]) -> None:
+    def __init__(
+        self, _session_factory: Callable[[], Session] = session_factory
+    ) -> None:
         super().__init__()
-        self._session_factory = session_factory
+        self._session_factory = _session_factory
 
     def __enter__(self):
         self.session = self._session_factory()

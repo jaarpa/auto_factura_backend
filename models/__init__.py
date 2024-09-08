@@ -1,6 +1,8 @@
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy import create_engine
 from sqlalchemy import URL
+from sqlalchemy.orm.session import sessionmaker
+from sqlalchemy.ext.asyncio.session import async_sessionmaker
 
 from shared.infrastructure.pyenviron import PyEnviron
 
@@ -25,9 +27,15 @@ database_url = URL.create(
 engine = create_engine(
     database_url, echo=_environ.get_bool("DEBUG"), echo_pool=_environ.get_bool("DEBUG")
 )
+
+session_factory = sessionmaker(bind=engine)
+
 async_engine = create_async_engine(
     database_url, echo=_environ.get_bool("DEBUG"), echo_pool=_environ.get_bool("DEBUG")
 )
+
+async_session_factory = async_sessionmaker(bind=async_engine)
+
 
 __all__ = [
     "Base",
