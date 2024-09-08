@@ -2,3 +2,4 @@
 
 alembic==1.13.2
 ipython
+pylint

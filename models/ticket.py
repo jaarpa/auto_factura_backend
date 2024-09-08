@@ -1,25 +1,24 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 from uuid import UUID
 
 from sqlalchemy import JSON
 from sqlalchemy import ForeignKey
+from sqlalchemy import UniqueConstraint
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 
 from models.base import Base
 
-if TYPE_CHECKING:
-    from models.user import User
-    from models.file import File
-    from models.emissor import Emissor
+from modules.tickets.domain.entities.ticket import Ticket
+from modules.files.domain.entities.file import File
+from modules.accounts.domain.entities.user import User
+from modules.emissors.domain.entities.emissor import Emissor
 
 
-class Ticket(Base):
+class TicketModel(Base):
     """
-    Represents a ticket with all its related data like ticket file, emissor
-    author
+    Defines the ticket table
     """
 
     __tablename__ = "ticket"
@@ -29,6 +28,21 @@ class Ticket(Base):
     emissor_id: Mapped[UUID] = mapped_column(ForeignKey("emissor.id"))
     file_id: Mapped[UUID] = mapped_column(ForeignKey("file.id"))
 
-    user: Mapped["User"] = relationship(back_populates="tickets")
-    emissor: Mapped["Emissor"] = relationship(back_populates="tickets")
-    file: Mapped["File"] = relationship(back_populates="ticket")
+    # user: Mapped["UserModel"] = relationship(back_populates="tickets")
+    # emissor: Mapped["EmissorModel"] = relationship(back_populates="tickets")
+    # file: Mapped["FileModel"] = relationship(
+    #     back_populates="ticket", single_parent=True
+    # )
+
+    __table_args__ = (UniqueConstraint("file_id"),)
+
+
+Base.registry.map_imperatively(
+    Ticket,
+    TicketModel.__table__,
+    properties={
+        "user": relationship(User, back_populates="tickets"),
+        "emissor": relationship(Emissor, back_populates="tickets"),
+        "file": relationship(File, back_populates="ticket", single_parent=True),
+    },
+)

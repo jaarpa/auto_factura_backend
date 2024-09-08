@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 from uuid import UUID
 
 from sqlalchemy import JSON
@@ -10,15 +9,14 @@ from sqlalchemy.orm import relationship
 
 from models.base import Base
 
-if TYPE_CHECKING:
-    from models.document_type import DocumentType
-    from models.ticket import Ticket
+from modules.files.domain.entities.file import File
+from modules.document_types.domain.entities.document_type import DocumentType
+from modules.tickets.domain.entities.ticket import Ticket
 
 
-class File(Base):
+class FileModel(Base):
     """
-    This represents any file uploaded to the app
-    (tickets | profile pictures | etc)
+    Defines the File table
     """
 
     __tablename__ = "file"
@@ -28,7 +26,12 @@ class File(Base):
     config: Mapped[dict] = mapped_column(JSON)
     document_type_id: Mapped[UUID] = mapped_column(ForeignKey("document_type.id"))
 
-    document_type: Mapped["DocumentType"] = relationship(
-        "DocumentType", back_populates="files"
-    )
-    ticket: Mapped["Ticket"] = relationship(back_populates="file", default=None)
+
+Base.registry.map_imperatively(
+    File,
+    FileModel.__table__,
+    properties={
+        "document_type": relationship(DocumentType, back_populates="files"),
+        "ticket": relationship(Ticket, back_populates="file"),
+    },
+)
