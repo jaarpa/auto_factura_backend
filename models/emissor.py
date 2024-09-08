@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 from uuid import UUID
 
 from sqlalchemy.orm import Mapped
@@ -7,14 +6,13 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 
 from models.base import Base
+from modules.emissors.domain.entities.emissor import Emissor
+from modules.tickets.domain.entities.ticket import Ticket
 
-if TYPE_CHECKING:
-    from models.ticket import Ticket
 
-
-class Emissor(Base):
+class EmissorModel(Base):
     """
-    Catalog of entities that could emit a ticket that could later be invoiced
+    Defines the Emissor table
     """
 
     __tablename__ = "emissor"
@@ -23,6 +21,9 @@ class Emissor(Base):
     label: Mapped[str] = mapped_column()
     description: Mapped[str] = mapped_column()
 
-    tickets: Mapped[list["Ticket"]] = relationship(
-        back_populates="emissor", default_factory=list
-    )
+
+Base.registry.map_imperatively(
+    Emissor,
+    EmissorModel.__table__,
+    properties={"tickets": relationship(Ticket, back_populates="emissor", repr=False)},
+)

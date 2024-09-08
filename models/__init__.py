@@ -5,11 +5,11 @@ from sqlalchemy import URL
 from shared.infrastructure.pyenviron import PyEnviron
 
 from .base import Base
-from .document_type import DocumentType
-from .emissor import Emissor
-from .file import File
-from .ticket import Ticket
-from .user import User
+from .document_type import DocumentTypeModel
+from .emissor import EmissorModel
+from .file import FileModel
+from .ticket import TicketModel
+from .user import UserModel
 
 _environ = PyEnviron()
 
@@ -27,9 +27,9 @@ async_engine = create_async_engine(database_url, echo=_environ.get_bool("DEBUG")
 
 __all__ = [
     "Base",
-    "DocumentType",
-    "Emissor",
-    "File",
-    "Ticket",
-    "User",
+    "DocumentTypeModel",
+    "EmissorModel",
+    "FileModel",
+    "TicketModel",
+    "UserModel",
 ]

@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 from uuid import UUID
 
 from sqlalchemy.orm import Mapped
@@ -8,13 +7,13 @@ from sqlalchemy.orm import relationship
 
 from models.base import Base
 
-if TYPE_CHECKING:
-    from models.file import File
+from modules.document_types.domain.entities.document_type import DocumentType
+from modules.files.domain.entities.file import File
 
 
-class DocumentType(Base):
+class DocumentTypeModel(Base):
     """
-    Catalog of different document type existing in the app (ticket, invoice, ...)
+    Defines the DocumentType table
     """
 
     __tablename__ = "document_type"
@@ -23,6 +22,11 @@ class DocumentType(Base):
     label: Mapped[str] = mapped_column()
     description: Mapped[str] = mapped_column()
 
-    files: Mapped[list["File"]] = relationship(
-        back_populates="document_type", default_factory=list
-    )
+
+Base.registry.map_imperatively(
+    DocumentType,
+    DocumentTypeModel.__table__,
+    properties={
+        "files": relationship(File, back_populates="document_type", repr=False)
+    },
+)
