@@ -28,7 +28,19 @@ class Repository[E_co](Protocol):
     @abstractmethod
     def filter_by_fields(self, **kwargs) -> Collection[E_co]:
         """
-        _summary_
+        Filters the repository entity by the kwargs.
+        All the attributes of the entity will match the provided field=values
+        in kwargs.
 
-        :return: _description_
+        :return: Collection of entities that matched in all the provided kwargs.
+        """
+
+    @abstractmethod
+    def add(self, entity_instance: E_co):
+        """
+        Adds the of the provided entity_instance to the session.
+        Thist can be used to create or update entities.
+        The entity will not persisted untill session commit by the unit of work.
+
+        :param entity_instance: Updated entity instance.
         """

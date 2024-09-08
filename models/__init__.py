@@ -22,8 +22,12 @@ database_url = URL.create(
     database=_environ.get_str("APP_DB"),
 )
 
-engine = create_engine(database_url, echo=_environ.get_bool("DEBUG"))
-async_engine = create_async_engine(database_url, echo=_environ.get_bool("DEBUG"))
+engine = create_engine(
+    database_url, echo=_environ.get_bool("DEBUG"), echo_pool=_environ.get_bool("DEBUG")
+)
+async_engine = create_async_engine(
+    database_url, echo=_environ.get_bool("DEBUG"), echo_pool=_environ.get_bool("DEBUG")
+)
 
 __all__ = [
     "Base",

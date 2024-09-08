@@ -1,3 +1,4 @@
+from uuid import UUID
 from typing import Union
 from fastapi import FastAPI, Body, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
@@ -9,6 +10,12 @@ from botocore.exceptions import NoCredentialsError,ClientError
 # import psycopg2
 # from psycopg2 import sql
 # from importlib import reload, import_module
+from sqlalchemy.orm.session import sessionmaker
+from models import engine
+from shared.infrastructure.alchemy_unit_of_work import AlchemyUnitOfWork
+from shared.infrastructure.alchemy_repository import AlchemyRepository
+from modules.files.domain.entities.file import File as FileEntity
+
 
 app = FastAPI()
 load_dotenv()
@@ -25,9 +32,9 @@ def read_root():
 # async def create_file(file: bytes= File()):
 #     return {"file_size": len(file)}
 
-# MAX_FILE_SIZE = 5 * 1048576
+MAX_FILE_SIZE = 5 * 1048576
 
-# ALLOWED_FILE_TYPE = {"image/jpeg", "image/png", "image/jpg"} # cuándo usar el set ...?
+ALLOWED_FILE_TYPE = {"image/jpeg", "image/png", "image/jpg"}  # cuándo usar el set ...?
 
 # @app.middleware("http")
 # async def limit_file_size(request,call_next):
@@ -104,25 +111,45 @@ def read_root():
 # bucket_name = 'rubenstocker26'
 # subfolder = 'pruebas'
 
-# @app.post("/uploadfile/")
-# async def create_upload_file(file:UploadFile = File(...)):
-#     try:
-#         if file.content_type not in ALLOWED_FILE_TYPE:
-#             raise HTTPException(status_code=400, detail= "Tipo de archivo no permitido. Solo se admite JPEG")
 
-#         else:
-#         # contents = await file.read()
-#         # print(f"Archivo recivido: {file.filename}, tamaño: {len(contents)} bytes")
-#             file_location = f"/tmp/{file.filename}"
-#             with open(file_location,'wb') as f:
-#                 f.write(file.file.read())
+@app.post("/file/")
+async def create_upload_file(file: UploadFile = File(...)):
+    if file.content_type not in ALLOWED_FILE_TYPE:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Tipo de archivo no permitido. Solo se admite {ALLOWED_FILE_TYPE}",
+        )
+    if not file.filename:
+        raise HTTPException(
+            status_code=404,
+            detail="File is missing filename",
+        )
+    try:
+        # contents = await file.read()
+        # print(f"Archivo recivido: {file.filename}, tamaño: {len(contents)} bytes")
+        file_location = f"/tmp/{file.filename}"
+        # with open(file_location,'wb') as f:
+        #     f.write(file.file.read())
 
-#             #Upload file to S3
-#             upload_file_s3(file_location,bucket_name,subfolder)
+        # Upload file to S3
+        # upload_file_s3(file_location,bucket_name,subfolder)
+        uploaded_ticket = FileEntity(
+            name=file.filename,
+            key=file_location,
+            config={},
+            document_type_id=UUID("a9e39cc9-1749-4da6-b271-cd71cd0481df"),
+        )
+        session_factory = sessionmaker(bind=engine)
+        with AlchemyUnitOfWork(session_factory) as uow:
+            file_repository = AlchemyRepository[FileEntity](FileEntity, uow.session)
+            file_repository.add(uploaded_ticket)
+            uow.commit()
 
-#             return {"filename": file.filename}
+        return {"filename": file.filename}
+    except:
+        raise HTTPException(status_code=500, detail="Something wrong")
 
-#     finally:
-#         #Delete temporaly file
-#         if os.path.exists(file_location):
-#             os.remove(file_location)
+    finally:
+        # Delete temporaly file
+        if os.path.exists(file_location):
+            os.remove(file_location)
