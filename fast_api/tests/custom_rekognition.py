@@ -9,18 +9,20 @@ response = rekognition_client.detect_custom_labels(
     Image={
         'S3Object': {
             'Bucket': 'custom-labels-console-us-east-1-f23390f701',
-            'Name': 'test/coppel/Alfonso Ikayka Martínez Aragón pgg1_Coppel - Alfonso Ikayka Martinez Aragón.jpeg'
+            'Name': 'test/walmart/2024-01-15_04-19-32-090.png'
         }
     },
     MinConfidence=10,  # Puedes ajustar el umbral de confianza mínimo
     MaxResults=10
 )
 
-for label in response['CustomLabels']:
-    print(f"Etiqueta: {label['Name']}, Confianza: {label['Confidence']:.2f}%")
+etiqueta = response["CustomLabels"][0]["Name"]
+print(etiqueta)
+# for label in response['CustomLabels']:
+#     print(f"Etiqueta: {label['Name']}, Confianza: {label['Confidence']:.2f}%")
 
-output_file = 'resultado_custom_rek.json'
+#output_file = 'resultado_custom_rek.json' # nombre para guardar el archivo
 
-# Guardar el resultado en un archivo JSON
-with open(output_file, 'w') as file:
-    json.dump(response, file, indent=4)
+# # Guardar el resultado en un archivo JSON
+# with open(output_file, 'w') as file:
+#     json.dump(response, file, indent=4)

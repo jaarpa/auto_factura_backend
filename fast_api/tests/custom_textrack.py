@@ -3,6 +3,20 @@ import boto3
 import json
 #f781b57d74d0
 # Crear cliente de Textract
+
+# queries_config = {
+#     'Queries':[
+#         {
+#             'Text': 'what is the tr number?',
+#             'Alias': 'tr'
+#         },
+#         {
+#             'Text': 'what is the tc number?',
+#             'Alias': 'tc'
+#         }
+#     ]
+# }
+
 def process_expense(bucket,document):
     print("la vaxa ñpca")
     client = boto3.client('textract')
@@ -17,6 +31,7 @@ def process_expense(bucket,document):
         FeatureTypes=[
             'QUERIES'
         ],
+        # QueriesConfig = queries_config,
         QueriesConfig={
             'Queries':  [
         {
@@ -27,7 +42,7 @@ def process_expense(bucket,document):
             'Text': 'what is the tc number?',
             'Alias': 'tc'
         }
-    ]
+        ]
         },
         AdaptersConfig={
             'Adapters': [
@@ -42,7 +57,7 @@ def process_expense(bucket,document):
     # Procesar la respuesta
     # Crear un diccionario para almacenar los resultados
     result = {}
-
+    # FALTA VERIFICAR QUE FUNCIONE PARA TODOS LOS ADAPTADORES.
     # Iterar sobre los bloques
     for block in response['Blocks']:
         block_type = block.get('BlockType')
