@@ -1,10 +1,15 @@
 from __future__ import annotations
 from typing import Callable
+from typing import TypeVar
 
 from sqlalchemy.orm.session import Session
 
 from models import session_factory
 from shared.domain.unit_of_work import UnitOfWork
+from shared.domain.entity import Entity
+
+
+E = TypeVar("E", bound=Entity)
 
 
 class AlchemyUnitOfWork(UnitOfWork):
@@ -13,6 +18,9 @@ class AlchemyUnitOfWork(UnitOfWork):
     """
 
     session: Session
+    """
+    Session will only be populated till the unit of work enters into a context.
+    """
 
     def __init__(
         self, _session_factory: Callable[[], Session] = session_factory
@@ -33,3 +41,6 @@ class AlchemyUnitOfWork(UnitOfWork):
 
     def rollback(self):
         self.session.rollback()
+
+    def add(self, entity_instance: E):
+        self.session.add(entity_instance)

@@ -39,8 +39,8 @@ class Repository[E_co](Protocol):
     def add(self, entity_instance: E_co):
         """
         Adds the of the provided entity_instance to the session.
-        Thist can be used to create or update entities.
-        The entity will not persisted untill session commit by the unit of work.
+        This can be used to create or update entities.
+        The entity will not persisted till session commit by the unit of work.
 
         :param entity_instance: Updated entity instance.
         """

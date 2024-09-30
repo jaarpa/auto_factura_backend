@@ -2,24 +2,26 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "type": "docker-build",
-      "label": "docker-build",
-      "platform": "python",
-      "dockerBuild": {
-        "tag": "autofacturabacked:latest",
-        "dockerfile": "${workspaceFolder}/.docker/Dockerfile",
-        "context": "${workspaceFolder}",
-        "pull": true
-      }
+      "label": "docker debug up",
+      "type": "shell",
+      "command": "docker compose -f docker-compose.yml -f docker-compose.debug.yml up autofacturabackend --build -d",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "dependsOn": []
     },
     {
-      "type": "docker-run",
-      "label": "docker-run: debug",
-      "dependsOn": ["docker-build"],
-      "python": {
-        "args": ["main:app", "--host", "0.0.0.0", "--port", "8000"],
-        "module": "uvicorn"
-      }
+      "label": "docker debug down",
+      "type": "shell",
+      "command": "docker compose -f docker-compose.yml -f docker-compose.debug.yml down autofacturabackend",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "dependsOn": []
     }
   ]
 }

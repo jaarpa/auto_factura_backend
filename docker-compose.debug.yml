@@ -1,12 +1,12 @@
 version: '3.9'
 
 services:
-  autofacturabacked:
-    image: autofacturabacked
+  autofacturabackend:
+    image: autofacturabackend
     build:
       context: .
-      dockerfile: ./Dockerfile
-    command: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 -m uvicorn fast_api/main:app --host 0.0.0.0 --port 8000"]
+      dockerfile: .docker/Dockerfile
+    command: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --listen 0.0.0.0:5678 -m uvicorn fastapi_app.application:app --host 0.0.0.0 --port 8000"]
     ports:
       - 8000:8000
       - 5678:5678

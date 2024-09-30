@@ -10,7 +10,6 @@ from typing import Sequence, Union
 from uuid import UUID
 
 from alembic import op
-import sqlalchemy as sa
 from sqlalchemy.orm import Session
 from modules.emissors.domain.entities.emissor import Emissor
 from modules.document_types.domain.entities.document_type import DocumentType

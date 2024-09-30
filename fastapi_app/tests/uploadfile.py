@@ -8,7 +8,7 @@
 
 # load_dotenv()
 
-# file_path = 'src/fast_api/img3.jpg'
+# file_path = 'src/fastapi_app/img3.jpg'
 # bucket_name = 'rubenstocker26'
 # subfolder = 'pruebas'
 
