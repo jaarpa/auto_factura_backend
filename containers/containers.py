@@ -4,7 +4,7 @@ from dependency_injector.providers import Factory
 from dependency_injector.providers import Configuration
 from dependency_injector.providers import Resource
 
-from shared.infrastructure.aws_cloud_storage import AWSS3
+from shared.infrastructure.cloud.aws_storage import AWSS3
 from shared.infrastructure.alchemy_unit_of_work import AlchemyUnitOfWork
 
 
