@@ -12,8 +12,8 @@ from jwt import PyJWKClient
 logger = logging.getLogger(__name__)
 
 cognito_domain = "https://autofactura.auth.us-east-1.amazoncognito.com"
-client_id = "5g70h8hdc94pfll9vq42n7pons"
-client_secret = "qcdjhu4u5ab7b5icraiidtt4hpfa6ps3sidecojsi1b4da8i3av"
+client_id = os.getenv("client_id")
+client_secret = os.getenv("client_secret")
 redirect_uri = "http://localhost:8000/callback"
 jwks_url = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_RSQXxoYER/.well-known/jwks.json"
 region = "us-east-1"
