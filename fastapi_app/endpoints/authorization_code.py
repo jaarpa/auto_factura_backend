@@ -1,4 +1,3 @@
-
 from fastapi_app.endpoints import router
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse
@@ -21,21 +20,32 @@ user_pool_id = "us-east-1_RSQXxoYER"
 
 @router.get("/callback")
 async def callback(request: Request):
-    # Authorization code 
+    # Authorization code
     authorization_code = request.query_params.get("code")
     if not authorization_code:
         return {"error": "Authorization code not found"}
-    
-    tokens = await exchange_code_for_tokens(authorization_code)
-    
-    # Validate the ID token.
-    id_token = tokens.get("id_token")
-    if not id_token or not await validate_jwt(id_token):
-        raise HTTPException(status_code=401, detail="Invalid or expired ID token")
-    
-    return "bien hecho"
 
-async def exchange_code_for_tokens(code:str):
+    tokens = await exchange_code_for_tokens(authorization_code)
+
+    # Obtener el ID token
+    id_token = tokens.get("id_token")
+    if not id_token:  # or not await validate_jwt(id_token):
+        raise HTTPException(status_code=400, detail="ID token not found")
+
+    # Validar el ID token
+    decoded_token = await validate_jwt(id_token)
+    if not decoded_token:
+        raise HTTPException(status_code=401, detail="Invalid or expired ID token")
+
+    return JSONResponse(
+        content={
+            "message": "Token validated successfully",
+            "decoded_token": decoded_token,
+        }
+    )
+
+
+async def exchange_code_for_tokens(code: str):
     url = f"{cognito_domain}/oauth2/token"
     data = {
         "grant_type":"authorization_code",
@@ -48,11 +58,11 @@ async def exchange_code_for_tokens(code:str):
         "Content-Type": "application/x-www-form-urlencoded",
         "Authorization": "Basic NWc3MGg4aGRjOTRwZmxsOXZxNDJuN3BvbnM6cWNkamh1NHU1YWI3YjVpY3JhaWlkdHQ0aHBmYTZwczNzaWRlY29qc2kxYjRkYThpM2F2"
     }
-    
+
     async with httpx.AsyncClient() as client:
         response = await client.post(url, data=data, headers=headers)
         response_data = response.json()
-        
+
         if response.status_code == 200:
             return {
                 "id_token": response_data.get("id_token"),
@@ -62,26 +72,31 @@ async def exchange_code_for_tokens(code:str):
             }
         else:
             return {"error": response_data.get("error","Token exchange failed")}
-        
-async def validate_jwt(token:str) -> bool:
-    # Crear un cliente PyJWK para obtener la clave pública
-    jwks_client = PyJWKClient(jwks_url)
-    
+
+
+# Crear un cliente PyJWK para obtener la clave pública
+jwks_client = PyJWKClient(jwks_url)
+
+
+async def validate_jwt(token: str) -> dict:
+
     try:
-        #Get the token header and find the corresponding key.
+        # Get the token header and find the corresponding key.
         signing_key = jwks_client.get_signing_key_from_jwt(token)
-        
-        #Decode and validate token.
+
+        # Decode and validate token.
         decoded_token = jwt.decode(
             token,
             signing_key.key,
             algorithms=["RS256"],
-            audience = client_id
+            audience=client_id,
+            issuer=f"https://cognito-idp.us-east-1.amazonaws.com/{user_pool_id}",
         )
-        return True
+        return decoded_token
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token has expired")
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
     except Exception as e:
+        print(f"Unexpected error during JWT validation:{e}")
         raise HTTPException(status_code=500, detail=str(e))
