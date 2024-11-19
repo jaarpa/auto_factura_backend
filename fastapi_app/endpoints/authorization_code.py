@@ -7,6 +7,8 @@ import os
 import json
 import jwt
 from jwt import PyJWKClient
+from .validator_class import JWTValidator
+
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +19,11 @@ redirect_uri = "http://localhost:8000/callback"
 jwks_url = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_RSQXxoYER/.well-known/jwks.json"
 region = "us-east-1"
 user_pool_id = "us-east-1_RSQXxoYER"
+
+# Create a global instance of JWTValidator
+jwt_validator = JWTValidator(
+    jwks_url=jwks_url, client_id=client_id, user_pool_id=user_pool_id
+)
 
 @router.get("/callback")
 async def callback(request: Request):
@@ -29,13 +36,16 @@ async def callback(request: Request):
 
     # Obtener el ID token
     id_token = tokens.get("id_token")
-    if not id_token:  # or not await validate_jwt(id_token):
+    if not id_token:
         raise HTTPException(status_code=400, detail="ID token not found")
 
-    # Validar el ID token
-    decoded_token = await validate_jwt(id_token)
-    if not decoded_token:
-        raise HTTPException(status_code=401, detail="Invalid or expired ID token")
+    # # Validar el ID token
+    # decoded_token = await validate_jwt(id_token)
+    # if not decoded_token:
+    #     raise HTTPException(status_code=401, detail="Invalid or expired ID token")
+
+    # Validate the ID token using the global instance
+    decoded_token = await jwt_validator.validate_jwt(id_token)
 
     return JSONResponse(
         content={
@@ -74,29 +84,29 @@ async def exchange_code_for_tokens(code: str):
             return {"error": response_data.get("error","Token exchange failed")}
 
 
-# Crear un cliente PyJWK para obtener la clave pública
-jwks_client = PyJWKClient(jwks_url)
+# # Crear un cliente PyJWK para obtener la clave pública
+# jwks_client = PyJWKClient(jwks_url)
 
 
-async def validate_jwt(token: str) -> dict:
+# async def validate_jwt(token: str) -> dict:
 
-    try:
-        # Get the token header and find the corresponding key.
-        signing_key = jwks_client.get_signing_key_from_jwt(token)
+#     try:
+#         # Get the token header and find the corresponding key.
+#         signing_key = jwks_client.get_signing_key_from_jwt(token)
 
-        # Decode and validate token.
-        decoded_token = jwt.decode(
-            token,
-            signing_key.key,
-            algorithms=["RS256"],
-            audience=client_id,
-            issuer=f"https://cognito-idp.us-east-1.amazonaws.com/{user_pool_id}",
-        )
-        return decoded_token
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token has expired")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    except Exception as e:
-        print(f"Unexpected error during JWT validation:{e}")
-        raise HTTPException(status_code=500, detail=str(e))
+#         # Decode and validate token.
+#         decoded_token = jwt.decode(
+#             token,
+#             signing_key.key,
+#             algorithms=["RS256"],
+#             audience=client_id,
+#             issuer=f"https://cognito-idp.us-east-1.amazonaws.com/{user_pool_id}",
+#         )
+#         return decoded_token
+#     except jwt.ExpiredSignatureError:
+#         raise HTTPException(status_code=401, detail="Token has expired")
+#     except jwt.InvalidTokenError:
+#         raise HTTPException(status_code=401, detail="Invalid token")
+#     except Exception as e:
+#         print(f"Unexpected error during JWT validation:{e}")
+#         raise HTTPException(status_code=500, detail=str(e))
