@@ -1,9 +1,13 @@
+# implementation
 from fastapi import HTTPException
 from jwt import PyJWKClient, decode
+from modules.accounts.domain.service.interface_jwt_validator import JWTValidator
+import jwt
 
 
-class JWTValidator:
+class ValidateJWT(JWTValidator):
     def __init__(self, jwks_url: str, client_id: str, user_pool_id: str):
+
         # PyJWKClient instance created once.
         self.jwks_client = PyJWKClient(jwks_url)
         self.client_id = client_id

@@ -6,7 +6,8 @@
       "request": "launch",
       "module": "uvicorn",
       "args": ["fastapi_app.application:app", "--reload"],
-      "jinja": true
+      "jinja": true,
+      "envFile": "${workspaceFolder}/.env"
     },
 
     {

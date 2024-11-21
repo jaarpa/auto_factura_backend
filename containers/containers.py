@@ -4,8 +4,10 @@ from dependency_injector.providers import Factory
 from dependency_injector.providers import Configuration
 from dependency_injector.providers import Resource
 
+
 from shared.infrastructure.cloud.aws_storage import AWSS3
 from shared.infrastructure.alchemy_unit_of_work import AlchemyUnitOfWork
+from modules.accounts.infrastructure.service.imple_validator import ValidateJWT
 
 
 class Container(DeclarativeContainer):
@@ -39,3 +41,10 @@ class Container(DeclarativeContainer):
         default_bucket=app_config.aws.default_bucket_name,
     )
     unit_of_work = Factory(AlchemyUnitOfWork)
+    # JWT VALIDATOR
+    jwt_validator = Factory(
+        ValidateJWT,
+        jwks_url=app_config.cognito.jwks_url,
+        client_id=app_config.cognito.client_id,
+        user_pool_id=app_config.cognito.user_pool_id,
+    )

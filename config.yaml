@@ -1,2 +1,11 @@
 aws:
   default_bucket_name: "autofactura"
+cognito:
+  cognito_domain: "https://autofactura.auth.us-east-1.amazoncognito.com"
+  client_id: ${CLIENT_ID} # os.getenv("client_id")
+  client_secret: ${CLIENT_SECRET} # ("client_secret")
+  redirect_uri: "http://localhost:8000/callback"
+  jwks_url: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_RSQXxoYER/.well-known/jwks.json"
+  region: "us-east-1"
+  user_pool_id: "us-east-1_RSQXxoYER"
+  authorization: "NWc3MGg4aGRjOTRwZmxsOXZxNDJuN3BvbnM6cWNkamh1NHU1YWI3YjVpY3JhaWlkdHQ0aHBmYTZwczNzaWRlY29qc2kxYjRkYThpM2F2"
