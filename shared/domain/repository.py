@@ -1,9 +1,7 @@
-from uuid import UUID
-from typing import Protocol
-from typing import TypeVar
-from typing import runtime_checkable
 from abc import abstractmethod
 from collections.abc import Collection
+from typing import Protocol, TypeVar, runtime_checkable
+from uuid import UUID
 
 from shared.domain.entity import Entity
 
@@ -33,6 +31,17 @@ class Repository[E_co](Protocol):
         in kwargs.
 
         :return: Collection of entities that matched in all the provided kwargs.
+        """
+
+    @abstractmethod
+    def get_by_fields(self, **kwargs) -> E_co | None:
+        """
+        Gets the one entity that matches all the attributes provided as field=values
+        in kwargs.
+        This expects that only one entity matches the arguments, an Exception is raised
+        if more than one is found.
+
+        :return: One entities that matched in all the provided kwargs.
         """
 
     @abstractmethod

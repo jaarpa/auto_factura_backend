@@ -1,12 +1,10 @@
 from __future__ import annotations
+
 from uuid import UUID
 
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
-
 from modules.document_types.domain.entities.document_type import DocumentType
 from modules.files.domain.entities.file import File
 
@@ -18,7 +16,7 @@ class DocumentTypeModel(Base):
 
     __tablename__ = "document_type"
     id: Mapped[UUID] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column()
+    name: Mapped[str] = mapped_column(unique=True)
     label: Mapped[str] = mapped_column()
     description: Mapped[str] = mapped_column()
 

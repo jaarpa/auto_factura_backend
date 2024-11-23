@@ -29,6 +29,10 @@
     ".vscode",
     ".vscode-insiders",
     ".env",
-    ".gitignore"
-  ]
+    ".gitignore",
+    "requirements/**",
+    "auto_factura_backed.code-workspace",
+    "logging.yaml"
+  ],
+  "cSpell.words": ["AWSS3"]
 }

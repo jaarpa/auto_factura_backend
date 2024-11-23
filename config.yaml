@@ -1,2 +1,2 @@
 aws:
-  default_bucket_name: "autofactura"
+  default_bucket_name: "auto-invoice-dev"

@@ -18,6 +18,7 @@
     "netcorext.uuid-generator",
     "aaron-bond.better-comments",
     "bierner.markdown-mermaid",
-    "postman.postman-for-vscode"
+    "postman.postman-for-vscode",
+    "ckolkman.vscode-postgres"
   ]
 }

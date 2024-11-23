@@ -1,7 +1,7 @@
 {
   "configurations": [
     {
-      "name": "Python Debugger: FastAPI",
+      "name": "FastAPI",
       "type": "debugpy",
       "request": "launch",
       "module": "uvicorn",
@@ -10,7 +10,7 @@
     },
 
     {
-      "name": "Python Debugger: Attach",
+      "name": "(Docker) FastAPI",
       "type": "debugpy",
       "request": "attach",
       "connect": {
