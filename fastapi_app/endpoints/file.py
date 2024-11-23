@@ -1,19 +1,16 @@
 import logging
-from uuid import uuid4
-from uuid import UUID
 from collections import defaultdict
 from typing import Annotated
+from uuid import UUID, uuid4
 
-from fastapi import UploadFile
-from fastapi import Depends
-from dependency_injector.wiring import inject
-from dependency_injector.wiring import Provide
+from dependency_injector.wiring import Provide, inject
+from fastapi import Depends, UploadFile
+from fastapi import File as FastAPIFile
 
 from fastapi_app.endpoints import router
-from fastapi import File as FastAPIFile
+from modules.files.domain.entities.file import File
 from shared.domain.cloud.storage import CloudStorage
 from shared.domain.unit_of_work import UnitOfWork
-from modules.files.domain.entities.file import File
 
 logger = logging.getLogger(__name__)
 
