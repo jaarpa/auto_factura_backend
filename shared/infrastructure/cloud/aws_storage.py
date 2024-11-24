@@ -1,3 +1,4 @@
+import logging
 from io import BytesIO
 from typing import BinaryIO
 from uuid import UUID
@@ -6,8 +7,9 @@ from boto3.session import Session
 
 from modules.files.domain.entities.file import File
 from shared.domain.cloud.storage import CloudStorage
-from shared.domain.cloud.storage_exceptions import UploadingFileException
+from shared.domain.cloud.storage_exceptions import FileUploadException
 
+logger = logging.getLogger(__name__)
 
 class AWSS3(CloudStorage):
     """
@@ -41,9 +43,12 @@ class AWSS3(CloudStorage):
         """
         bucket_name = bucket or self.__default_bucket
         try:
+            logger.info(
+                f"Uploading object with key={file.key} to {bucket_name=} and kwargs={kwargs}"
+            )
             self.__s3_client.upload_fileobj(data, bucket_name, file.key, kwargs)
         except self.__s3_client.exceptions.ClientError as e:
-            raise UploadingFileException from e
+            raise FileUploadException from e
 
     def get_file_key(self, file_id: UUID, filename: str, document_type: str) -> str:
         return f"{document_type}/{file_id}_{filename}"

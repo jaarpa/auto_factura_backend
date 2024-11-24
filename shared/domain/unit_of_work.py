@@ -1,10 +1,11 @@
 from __future__ import annotations
+
 from abc import abstractmethod
 from contextlib import AbstractContextManager
 from typing import TypeVar
 
 from shared.domain.entity import Entity
-
+from shared.domain.repository import Repository
 
 E = TypeVar("E", bound=Entity)
 
@@ -48,4 +49,14 @@ class UnitOfWork(AbstractContextManager):
         The entity will not persisted till session commit by the unit of work.
 
         :param entity_instance: Updated entity instance.
+        """
+
+    @abstractmethod
+    def get_repository(self, entity_class: type[E]) -> Repository[E]:
+        """
+        Returns the repository to manage the `entity_class` with the same
+        session as the current uow.
+
+        :param entity_class: Entity class to be managed
+        :return: Repository that manages the entity class
         """

@@ -6,7 +6,9 @@ from sqlalchemy.orm.session import Session
 
 from models import session_factory
 from shared.domain.entity import Entity
+from shared.domain.repository import Repository
 from shared.domain.unit_of_work import UnitOfWork
+from shared.infrastructure.alchemy_repository import AlchemyRepository
 
 E = TypeVar("E", bound=Entity)
 
@@ -43,3 +45,6 @@ class AlchemyUnitOfWork(UnitOfWork):
 
     def add(self, entity_instance: E):
         self.session.add(entity_instance)
+
+    def get_repository(self, entity_class: type[E]) -> Repository[E]:
+        return AlchemyRepository[entity_class](entity_class, self.session)
