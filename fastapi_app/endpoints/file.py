@@ -3,7 +3,7 @@ from typing import Annotated
 from uuid import UUID
 
 from dependency_injector.wiring import Provide, inject
-from fastapi import Depends, Form, UploadFile
+from fastapi import Depends, Form, HTTPException, UploadFile, status
 from fastapi import File as FastAPIFile
 
 from fastapi_app.endpoints import router
@@ -17,7 +17,7 @@ from shared.domain.unit_of_work import UnitOfWork
 logger = logging.getLogger(__name__)
 
 
-@router.post("/file/")
+@router.put("/file/", status_code=status.HTTP_202_ACCEPTED)
 @inject
 async def create_upload_file(
     file: Annotated[
@@ -39,30 +39,28 @@ async def create_upload_file(
     """
 
     try:
+        document_type = document_type_repository.get_by_fields(name=document_type_name)
+        if not document_type:
+            raise Exception
+        filename = file.filename or str(file_id)
+        file_config = cloud_storage.get_file_config(
+            file_id, filename, document_type_name
+        )
+        file_key = file_config["key"]
+        file_entity = File(
+            id=file_id,
+            name=filename,
+            key=file_key,
+            config=file_config,
+            document_type_id=document_type.id,
+        )
+        cloud_storage.put_file_data(file_entity, file.file)
         with unit_of_work as uow:
-            document_type = document_type_repository.get_by_fields(
-                name=document_type_name
-            )
-            if not document_type:
-                raise Exception
-            filename = file.filename or str(file_id)
-            file_config = cloud_storage.get_file_config(
-                file_id, filename, document_type_name
-            )
-            file_key = file_config["key"]
-            file_entity = File(
-                id=file_id,
-                name=filename,
-                key=file_key,
-                config=file_config,
-                document_type_id=document_type.id,
-            )
-            try:
-                cloud_storage.put_file_data(file_entity, file.file)
-                uow.add(file_entity)
-                uow.commit()
-            except UploadingFileException:
-                logger.exception("Uploading file error")
-    except Exception as e:
-        logger.error(f"{e}")
-    return file_entity
+            uow.add(file_entity)
+            uow.commit()
+        return file_entity
+    except UploadingFileException as e:
+        logger.error(f"Error uploading the file with config {file_config}")
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR, "Error uploading your file"
+        ) from e

@@ -2,6 +2,7 @@
   "recommendations": [
     "njpwerner.autodocstring",
     "Boto3typed.boto3-ide",
+    "amazonwebservices.aws-toolkit-vscode",
     "streetsidesoftware.code-spell-checker",
     "ms-vscode-remote.remote-containers",
     "ms-azuretools.vscode-docker",
