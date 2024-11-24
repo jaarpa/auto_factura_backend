@@ -5,6 +5,7 @@ from uuid import UUID
 from dependency_injector.wiring import Provide, inject
 from fastapi import Depends, Form, HTTPException, UploadFile, status
 from fastapi import File as FastAPIFile
+from pydantic import BaseModel
 
 from fastapi_app.endpoints import router
 from modules.document_types.domain.entities.document_type import DocumentType
@@ -16,6 +17,11 @@ from shared.domain.unit_of_work import UnitOfWork
 
 logger = logging.getLogger(__name__)
 
+class FileResponse(BaseModel):
+    id: UUID
+    name: str
+    document_type_id: UUID
+    model_config = {"from_attributes": True}
 
 @router.put("/file/", status_code=status.HTTP_202_ACCEPTED)
 @inject
@@ -30,7 +36,7 @@ async def create_upload_file(
     ),
     cloud_storage: CloudStorage = Depends(Provide["cloud_storage"]),
     unit_of_work: UnitOfWork = Depends(Provide["unit_of_work"]),
-) -> File:
+) -> FileResponse:
     """
     Receives files to create their corresponding entities and store
     them in the cloud.
@@ -58,7 +64,8 @@ async def create_upload_file(
         with unit_of_work as uow:
             uow.add(file_entity)
             uow.commit()
-        return file_entity
+            file_response = FileResponse.model_validate(file_entity)
+        return file_response
     except UploadingFileException as e:
         logger.error(f"Error uploading the file with config {file_config}")
         raise HTTPException(
