@@ -1,7 +1,7 @@
 from __future__ import annotations
+
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
-from dataclasses import dataclass
-from dataclasses import field
 
 from shared.domain.entity import Entity
 
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 @dataclass
-class Emissor(Entity):
+class Issuer(Entity):
     """
     Catalog of entities that could emit a ticket that could later be invoiced
     """

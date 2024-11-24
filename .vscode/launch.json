@@ -1,19 +1,30 @@
 {
   "configurations": [
     {
-      "name": "Docker: Python - Fastapi",
-      "type": "docker",
+      "name": "FastAPI",
+      "type": "debugpy",
       "request": "launch",
-      "preLaunchTask": "docker-run: debug",
-      "python": {
-        "pathMappings": [
-          {
-            "localRoot": "${workspaceFolder}",
-            "remoteRoot": "/app"
-          }
-        ],
-        "projectType": "fastapi"
-      }
+      "module": "uvicorn",
+      "args": ["fastapi_app.application:app", "--reload"],
+      "jinja": true
+    },
+
+    {
+      "name": "(Docker) FastAPI",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": {
+        "host": "localhost",
+        "port": 5678
+      },
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}",
+          "remoteRoot": "/app"
+        }
+      ],
+      "preLaunchTask": "docker debug up",
+      "postDebugTask": "docker debug down"
     }
   ]
 }

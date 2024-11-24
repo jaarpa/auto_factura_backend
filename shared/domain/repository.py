@@ -1,9 +1,7 @@
-from uuid import UUID
-from typing import Protocol
-from typing import TypeVar
-from typing import runtime_checkable
 from abc import abstractmethod
 from collections.abc import Collection
+from typing import Protocol, TypeVar, runtime_checkable
+from uuid import UUID
 
 from shared.domain.entity import Entity
 
@@ -36,11 +34,22 @@ class Repository[E_co](Protocol):
         """
 
     @abstractmethod
+    def get_by_fields(self, **kwargs) -> E_co | None:
+        """
+        Gets the one entity that matches all the attributes provided as field=values
+        in kwargs.
+        This expects that only one entity matches the arguments, an Exception is raised
+        if more than one is found.
+
+        :return: One entities that matched in all the provided kwargs.
+        """
+
+    @abstractmethod
     def add(self, entity_instance: E_co):
         """
         Adds the of the provided entity_instance to the session.
-        Thist can be used to create or update entities.
-        The entity will not persisted untill session commit by the unit of work.
+        This can be used to create or update entities.
+        The entity will not persisted till session commit by the unit of work.
 
         :param entity_instance: Updated entity instance.
         """

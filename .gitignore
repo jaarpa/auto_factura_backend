@@ -167,8 +167,5 @@ cython_debug/
 #folders
 archivos_uso/
 
-# pip-compile output requirement files
-requirements/*.txt
-
 # Secret files
 **/secrets/*

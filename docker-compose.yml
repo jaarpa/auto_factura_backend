@@ -16,10 +16,23 @@ services:
       - 8000:8000
     environment:
       - APP_PASSWORD_FILE=/run/secrets/postgres-app-passwd
+      # - AWS_CONFIG_FILE=/home/appuser/.aws/config
     env_file:
       - .env
     secrets:
       - postgres-app-passwd
+    volumes:
+      - ${HOME}/.aws:/home/appuser/.aws
+    healthcheck:
+      test: curl --fail http://localhost:8000/status || exit 1
+      interval: 30s
+      retries: 5
+      start_period: 5s
+      timeout: 10s
+    depends_on:
+      rdbms:
+        condition: service_healthy
+
 
   rdbms:
     image: postgres:16.4
@@ -39,6 +52,12 @@ services:
       - .docker/rdbms/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
     command: ["-c", "port=${POSTGRES_PORT}"]
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U autoinvoice -d autoinvoice"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
 
   rabbitqm:
     image: rabbitmq:management

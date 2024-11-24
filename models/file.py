@@ -1,16 +1,13 @@
 from __future__ import annotations
+
 from uuid import UUID
 
-from sqlalchemy import JSON
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
+from sqlalchemy import JSON, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
-
-from modules.files.domain.entities.file import File
 from modules.document_types.domain.entities.document_type import DocumentType
+from modules.files.domain.entities.file import File
 from modules.tickets.domain.entities.ticket import Ticket
 
 

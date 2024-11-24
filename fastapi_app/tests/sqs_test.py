@@ -21,13 +21,12 @@ def send_message_sqs(message_body:str):
         print('mensaje enviado a la cola')
     except Exception as e:
         raise e
-    
-    
+
+
 ##### REKOGNITION ######
 
 
-
-image_path = 'src/fast_api/img3.jpg'
+image_path = "src/fastapi_app/img3.jpg"
 
 def image_rekognition(image_path):
     with open(image_path, 'rb') as image_file:
@@ -46,7 +45,7 @@ def image_rekognition(image_path):
         print(f'Detected text: {text_detection["DetectedText"]}')
         print(f'Confidence: {text_detection["Confidence"]}%')
         print(f'Type: {text_detection["Type"]}')
-#prueba = send_message_sqs(message)
+# prueba = send_message_sqs(message)
 
 prueba_rk = image_rekognition(image_path)
 
@@ -56,20 +55,20 @@ prueba_rk = image_rekognition(image_path)
 # for obj in response.get('Contents',[]):
 #     image_name = obj['Key']
 #     # results.append(image_name)
-    
+
 #     rek_response = detect_labels(image_name)
-    
+
 #     image_result = {
 #         'Image' : image_name,
 #         'Labels' : []
 #     }
-    
+
 #     for label in rek_response['Labels']:
 #         image_result['Labels'].append({
 #             'Name': label['Name'],
 #             'Confidence' :label['Confidence']
 #         })
-    
+
 #     results.append(image_result)
 
 # json_data = {
@@ -83,4 +82,3 @@ prueba_rk = image_rekognition(image_path)
 #     ContentType = 'application/json'
 #     )
 # # print('proceso exitoso')
-    
