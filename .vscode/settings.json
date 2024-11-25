@@ -8,12 +8,12 @@
     }
   },
   // Python settings
-  "python.analysis.extraPaths": [
-    "${workspaceFolder}/fastapi_app",
-    "${workspaceFolder}/models",
-    "${workspaceFolder}/modules",
-    "${workspaceFolder}/shared"
-  ],
+  // "python.analysis.extraPaths": [
+  //   "${workspaceFolder}/fastapi_app",
+  //   "${workspaceFolder}/models",
+  //   "${workspaceFolder}/modules",
+  //   "${workspaceFolder}/shared"
+  // ],
   "python.envFile": "${workspaceFolder}/.env",
   "python.analysis.autoSearchPaths": true,
   // Testing settings
@@ -34,5 +34,5 @@
     "auto_factura_backed.code-workspace",
     "logging.yaml"
   ],
-  "cSpell.words": ["AWSS3"]
+  "cSpell.words": ["AURRERA", "AWSS3", "OXXO"]
 }

@@ -16,7 +16,7 @@ class IssuerModel(Base):
 
     __tablename__ = "issuer"
     id: Mapped[UUID] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column()
+    name: Mapped[str] = mapped_column(unique=True)
     label: Mapped[str] = mapped_column()
     description: Mapped[str] = mapped_column()
 

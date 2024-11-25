@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import JSON, ForeignKey, UniqueConstraint
@@ -21,7 +22,9 @@ class TicketModel(Base):
     id: Mapped[UUID] = mapped_column(primary_key=True)
     data: Mapped[dict] = mapped_column(JSON)
     user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id"))
-    issuer_id: Mapped[UUID] = mapped_column(ForeignKey("issuer.id"))
+    issuer_id: Mapped[Optional[UUID]] = mapped_column(
+        ForeignKey("issuer.id"), nullable=True
+    )
     file_id: Mapped[UUID] = mapped_column(ForeignKey("file.id"))
 
     __table_args__ = (UniqueConstraint("file_id"),)

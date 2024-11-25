@@ -2,6 +2,8 @@ from dependency_injector.containers import DeclarativeContainer, WiringConfigura
 from dependency_injector.providers import Configuration, Factory, Resource
 
 from modules.document_types.domain.entities.document_type import DocumentType
+from modules.files.domain.entities.file import File
+from modules.tickets.domain.entities.ticket import Ticket
 from shared.infrastructure.alchemy_repository import AlchemyRepository
 from shared.infrastructure.alchemy_unit_of_work import AlchemyUnitOfWork
 from shared.infrastructure.cloud.aws_storage import AWSS3
@@ -42,4 +44,12 @@ class Container(DeclarativeContainer):
     document_type_repository = Factory(
         AlchemyRepository[DocumentType],
         DocumentType,
+    )
+    file_repository = Factory(
+        AlchemyRepository[File],
+        File,
+    )
+    ticket_repository = Factory(
+        AlchemyRepository[Ticket],
+        Ticket,
     )
