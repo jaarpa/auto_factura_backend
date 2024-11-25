@@ -21,7 +21,7 @@ from shared.domain.unit_of_work import UnitOfWork
 
 logger = logging.getLogger(__name__)
 
-
+# TODO: Refactor to return also the file data.
 class NewTicketResponse(BaseModel):
     id: UUID
     file_id: UUID

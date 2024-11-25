@@ -12,6 +12,7 @@ from shared.domain.repository import Repository
 E_co = TypeVar("E_co", bound=Entity, covariant=True)
 
 
+# TODO: Add a method for listing all the entries of said entity `def all()`
 class AlchemyRepository[E_co](Repository[E_co]):
     """
     Generic repository implementation with sqlalchemy.
