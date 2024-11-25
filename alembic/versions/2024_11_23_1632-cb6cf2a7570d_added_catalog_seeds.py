@@ -45,11 +45,11 @@ def upgrade() -> None:
         label="Constancia de Situación Fiscal",
         description="Constancia de situación fiscal emitida por el SAT.",
     )
-    waltmart = Issuer(
+    walmart = Issuer(
         id=UUID("e476735e-e94a-4590-9d30-f4aea38fcf66"),
-        name="waltmart",
-        label="Waltmart",
-        description="Supermercado de retail minorista Waltmart",
+        name="walmart",
+        label="Walmart",
+        description="Supermercado de retail minorista Walmart",
     )
     aurrera = Issuer(
         id=UUID("0190e6bc-1d35-464c-8017-4c2d7249dd91"),
@@ -66,7 +66,7 @@ def upgrade() -> None:
 
     # Seed data
     session.add_all(
-        [ticket_type, invoice_type, tax_certificate_type, waltmart, aurrera, oxxo]
+        [ticket_type, invoice_type, tax_certificate_type, walmart, aurrera, oxxo]
     )
     session.commit()
     # ### end Alembic commands ###

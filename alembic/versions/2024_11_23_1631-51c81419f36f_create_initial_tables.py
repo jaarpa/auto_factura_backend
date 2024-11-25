@@ -71,17 +71,17 @@ def upgrade() -> None:
         sa.Column("id", sa.Uuid(), nullable=False),
         sa.Column("data", sa.JSON(), nullable=False),
         sa.Column("user_id", sa.Uuid(), nullable=False),
-        sa.Column("issuer_id", sa.Uuid(), nullable=False),
+        sa.Column("issuer_id", sa.Uuid(), nullable=True),
         sa.Column("file_id", sa.Uuid(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
         sa.ForeignKeyConstraint(
-            ["issuer_id"],
-            ["issuer.id"],
-        ),
-        sa.ForeignKeyConstraint(
             ["file_id"],
             ["file.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["issuer_id"],
+            ["issuer.id"],
         ),
         sa.ForeignKeyConstraint(
             ["user_id"],

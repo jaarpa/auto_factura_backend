@@ -20,9 +20,9 @@ class Ticket(Entity):
     """
 
     user_id: UUID
-    issuer_id: UUID
     file_id: UUID
     data: dict = field(default_factory=dict)
+    issuer_id: UUID | None = None
 
     user: User = field(init=False)
     file: File = field(init=False)
