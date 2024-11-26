@@ -4,6 +4,9 @@ from fastapi import FastAPI
 
 from containers import Container
 from fastapi_app.endpoints import router
+from dependency_injector.wiring import inject
+from fastapi_app.middleware.middleware import validate_jwt
+
 
 
 def create_app() -> FastAPI:
@@ -20,6 +23,9 @@ def create_app() -> FastAPI:
 
     fastapi_app = FastAPI()
     setattr(fastapi_app, "container", container)
+    
+    # container.wire(packages=["fastapi_app.middleware"])
+    # fastapi_app.middleware("http")(validate_jwt)
 
     fastapi_app.include_router(router)
 

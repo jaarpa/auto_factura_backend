@@ -1,13 +1,14 @@
 from fastapi import FastAPI, Request, HTTPException
-from fastapi_app.application import app
+#from fastapi_app.application import app
 from jwt import PyJWKClient, decode, ExpiredSignatureError, InvalidTokenError
 
 from fastapi import Depends
 from dependency_injector.wiring import Provide, inject
 
-#Start PyJWKClient client
+#Public routes.
+PUBLIC_ROUTES = ["/","/callback","/status","/docs","/openapi.json"]
 
-@app.middleware("http")
+#@app.middleware("http")
 @inject
 async def validate_jwt(request:Request,
                        call_next,
@@ -21,7 +22,11 @@ async def validate_jwt(request:Request,
     issuer: str = f"https://cognito-idp.us-east-1.amazonaws.com/{user_pool_id}"
     jwks_client = PyJWKClient(jwks_url)
     try:
+        if request.url.path in PUBLIC_ROUTES:
+            print("perfecto")
+            return await call_next(request)
         # Get the token from the Authorization header
+         
         auth_header = request.headers.get("Authorization")
         if not auth_header or not auth_header.startswith("Bearer "):
             raise HTTPException(status_code=401, detail="Authorization header missing or malformed")
