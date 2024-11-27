@@ -1,20 +1,18 @@
 from collections.abc import Collection
+from typing import Callable, Optional, TypeVar
 from uuid import UUID
-from typing import TypeVar
-from typing import Callable
-from typing import Optional
 
-from sqlalchemy.orm.session import Session
 from sqlalchemy import select
+from sqlalchemy.orm.session import Session
 
 from models import session_factory
-
 from shared.domain.entity import Entity
 from shared.domain.repository import Repository
 
 E_co = TypeVar("E_co", bound=Entity, covariant=True)
 
 
+# TODO: Add a method for listing all the entries of said entity `def all()`
 class AlchemyRepository[E_co](Repository[E_co]):
     """
     Generic repository implementation with sqlalchemy.
@@ -37,6 +35,11 @@ class AlchemyRepository[E_co](Repository[E_co]):
     def filter_by_fields(self, **kwargs) -> Collection[E_co]:
         stmt = select(self._entity_class).filter_by(**kwargs)
         results = self._session.scalars(stmt).all()
+        return results
+
+    def get_by_fields(self, **kwargs) -> E_co | None:
+        stmt = select(self._entity_class).filter_by(**kwargs)
+        results = self._session.scalar(stmt)
         return results
 
     def add(self, entity_instance: E_co):

@@ -1,0 +1,25 @@
+{
+  "recommendations": [
+    "njpwerner.autodocstring",
+    "Boto3typed.boto3-ide",
+    "amazonwebservices.aws-toolkit-vscode",
+    "streetsidesoftware.code-spell-checker",
+    "ms-vscode-remote.remote-containers",
+    "ms-azuretools.vscode-docker",
+    "tamasfe.even-better-toml",
+    "VisualStudioExptTeam.vscodeintellicode",
+    "mintlify.document",
+    "ms-python.mypy-type-checker",
+    "esbenp.prettier-vscode",
+    "ms-python.vscode-pylance",
+    "ms-python.python",
+    "ms-python.debugpy",
+    "KevinRose.vsc-python-indent",
+    "charliermarsh.ruff",
+    "netcorext.uuid-generator",
+    "aaron-bond.better-comments",
+    "bierner.markdown-mermaid",
+    "postman.postman-for-vscode",
+    "ckolkman.vscode-postgres"
+  ]
+}

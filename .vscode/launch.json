@@ -1,17 +1,16 @@
 {
   "configurations": [
     {
-      "name": "Python Debugger: FastAPI",
+      "name": "FastAPI",
       "type": "debugpy",
       "request": "launch",
       "module": "uvicorn",
       "args": ["fastapi_app.application:app", "--reload"],
-      "jinja": true,
-      "envFile": "${workspaceFolder}/.env"
+      "jinja": true
     },
 
     {
-      "name": "Python Debugger: Attach",
+      "name": "(Docker) FastAPI",
       "type": "debugpy",
       "request": "attach",
       "connect": {

@@ -1,72 +1,87 @@
 import logging
-from uuid import uuid4
-from uuid import UUID
-from collections import defaultdict
 from typing import Annotated
+from uuid import UUID
 
-from fastapi import UploadFile
-from fastapi import Depends
-from dependency_injector.wiring import inject
-from dependency_injector.wiring import Provide
+from dependency_injector.wiring import Provide, inject
+from fastapi import Depends, Form, HTTPException, Request, UploadFile, status
+from fastapi import File as FastAPIFile
+from pydantic import BaseModel
 
 from fastapi_app.endpoints import router
-from fastapi import File as FastAPIFile
-from shared.domain.cloud.storage import CloudStorage
-from shared.domain.unit_of_work import UnitOfWork
+from modules.document_types.domain.entities.document_type import DocumentType
 from modules.files.domain.entities.file import File
-from fastapi import Request
+from shared.domain.cloud.storage import CloudStorage
+from shared.domain.cloud.storage_exceptions import FileUploadException
+from shared.domain.unit_of_work import UnitOfWork
 
 logger = logging.getLogger(__name__)
 
+class FileResponse(BaseModel):
+    id: UUID
+    name: str
+    document_type_id: UUID
+    model_config = {"from_attributes": True}
 
-# TODO: Fix this endpoint
-@router.post("/file/")
+@router.put("/file/")
 @inject
 async def create_upload_file(
-    files: Annotated[
-        list[UploadFile], FastAPIFile(description="Multiple files as UploadFile")
+    file: Annotated[
+        UploadFile, FastAPIFile(description="Multiple files as UploadFile")
     ],
+    file_id: Annotated[UUID, Form()],
+    document_type_name: Annotated[str, Form()],
     request: Request,
     cloud_storage: CloudStorage = Depends(Provide["cloud_storage"]),
     unit_of_work: UnitOfWork = Depends(Provide["unit_of_work"]),
-) -> dict[str, list[File]]:
+) -> FileResponse:
     """
     Receives files to create their corresponding entities and store
     them in the cloud.
 
     :return: created file entities that were actually stored and created
     """
+
     user_data = request.state.user
 
-    file_entities = defaultdict(list)
-    ticket_type_id = UUID("a9e39cc9-1749-4da6-b271-cd71cd0481df")
     try:
         with unit_of_work as uow:
-            for file in files:
-                file_id = uuid4()
-                filename = file.filename or str(file_id)
-                file_key = f"{ticket_type_id}/{file_id}_{filename}"
-                file_config = {
-                    "provider": "s3",
-                    "bucket": "autofactura",
-                    "key": file_key,
-                }
+            document_type_repository = uow.get_repository(DocumentType)
+            file_repository = uow.get_repository(File)
+            document_type = document_type_repository.get_by_fields(
+                name=document_type_name
+            )
+            if not document_type:
+                raise HTTPException(
+                    status.HTTP_400_BAD_REQUEST,
+                    f"The document type {document_type_name} does not exist",
+                )
+            filename = file.filename or str(file_id)
+            file_config = cloud_storage.get_file_config(
+                file_id, filename, document_type_name
+            )
+            file_key = file_config["key"]
+            existent_file_entity = file_repository.get(file_id)
+            if existent_file_entity:
+                existent_file_entity.name = filename
+                existent_file_entity.key = file_key
+                existent_file_entity.config = file_config
+                existent_file_entity.document_type_id = document_type.id
+                file_entity = existent_file_entity
+            else:
                 file_entity = File(
                     id=file_id,
                     name=filename,
                     key=file_key,
                     config=file_config,
-                    document_type_id=ticket_type_id,
+                    document_type_id=document_type.id,
                 )
-                try:
-                    logger.info(f"The file {filename} will have the id {file_id}")
-                    cloud_storage.put_file_data(file_entity, file.file)
-                    uow.add(file_entity)
-                    file_entities["uploaded"].append(file_entity)
-                except Exception:
-                    file_entities["failed"].append(file_entity)
-                    logger.exception("Uploading file error")
+            cloud_storage.put_file_data(file_entity, file.file)
+            uow.add(file_entity)
             uow.commit()
-    except Exception as e:
-        logger.error(f"{e}")
-    return file_entities
+            file_response = FileResponse.model_validate(file_entity)
+        return file_response
+    except FileUploadException as e:
+        logger.error(f"Error uploading the file with config {file_config}")
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR, "Error uploading your file"
+        ) from e

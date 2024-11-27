@@ -5,16 +5,16 @@ from uuid import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
-from modules.document_types.domain.entities.document_type import DocumentType
-from modules.files.domain.entities.file import File
+from modules.issuer.domain.entities.issuer import Issuer
+from modules.tickets.domain.entities.ticket import Ticket
 
 
-class DocumentTypeModel(Base):
+class IssuerModel(Base):
     """
-    Defines the DocumentType table
+    Defines the Issuer table
     """
 
-    __tablename__ = "document_type"
+    __tablename__ = "issuer"
     id: Mapped[UUID] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(unique=True)
     label: Mapped[str] = mapped_column()
@@ -22,9 +22,7 @@ class DocumentTypeModel(Base):
 
 
 Base.registry.map_imperatively(
-    DocumentType,
-    DocumentTypeModel.__table__,
-    properties={
-        "files": relationship(File, back_populates="document_type", repr=False)
-    },
+    Issuer,
+    IssuerModel.__table__,
+    properties={"tickets": relationship(Ticket, back_populates="issuer", repr=False)},
 )

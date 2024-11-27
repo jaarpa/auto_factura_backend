@@ -1,11 +1,15 @@
-from typing import BinaryIO
+import logging
 from io import BytesIO
+from typing import BinaryIO
+from uuid import UUID
 
 from boto3.session import Session
 
-from shared.domain.cloud.storage import CloudStorage
 from modules.files.domain.entities.file import File
+from shared.domain.cloud.storage import CloudStorage
+from shared.domain.cloud.storage_exceptions import FileUploadException
 
+logger = logging.getLogger(__name__)
 
 class AWSS3(CloudStorage):
     """
@@ -38,4 +42,28 @@ class AWSS3(CloudStorage):
         the file data to the cloud storage using the file entity configuration.
         """
         bucket_name = bucket or self.__default_bucket
-        self.__s3_client.upload_fileobj(data, bucket_name, file.key, kwargs)
+        try:
+            logger.info(
+                f"Uploading object with key={file.key} to {bucket_name=} and kwargs={kwargs}"
+            )
+            self.__s3_client.upload_fileobj(data, bucket_name, file.key, kwargs)
+        except self.__s3_client.exceptions.ClientError as e:
+            raise FileUploadException from e
+
+    def get_file_key(self, file_id: UUID, filename: str, document_type: str) -> str:
+        return f"{document_type}/{file_id}_{filename}"
+
+    def get_file_config(
+        self,
+        file_id: UUID,
+        filename: str,
+        document_type: str,
+        bucket_name: str | None = None,
+    ) -> dict[str, str]:
+        bucket = bucket_name or self.__default_bucket
+        file_config = {
+            "provider": "s3",
+            "bucket": bucket,
+            "key": self.get_file_key(file_id, filename, document_type),
+        }
+        return file_config

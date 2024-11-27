@@ -1,13 +1,13 @@
-from dependency_injector.containers import DeclarativeContainer
-from dependency_injector.containers import WiringConfiguration
-from dependency_injector.providers import Factory
-from dependency_injector.providers import Configuration
-from dependency_injector.providers import Resource
+from dependency_injector.containers import DeclarativeContainer, WiringConfiguration
+from dependency_injector.providers import Configuration, Factory, Resource
 
-
-from shared.infrastructure.cloud.aws_storage import AWSS3
-from shared.infrastructure.alchemy_unit_of_work import AlchemyUnitOfWork
 from modules.accounts.infrastructure.service.imple_validator import ValidateJWT
+from modules.document_types.domain.entities.document_type import DocumentType
+from modules.files.domain.entities.file import File
+from modules.tickets.domain.entities.ticket import Ticket
+from shared.infrastructure.alchemy_repository import AlchemyRepository
+from shared.infrastructure.alchemy_unit_of_work import AlchemyUnitOfWork
+from shared.infrastructure.cloud.aws_storage import AWSS3
 
 
 class Container(DeclarativeContainer):
@@ -41,10 +41,24 @@ class Container(DeclarativeContainer):
         default_bucket=app_config.aws.default_bucket_name,
     )
     unit_of_work = Factory(AlchemyUnitOfWork)
+
     # JWT VALIDATOR
     jwt_validator = Factory(
         ValidateJWT,
         jwks_url=app_config.cognito.jwks_url,
         client_id=app_config.cognito.client_id,
         user_pool_id=app_config.cognito.user_pool_id,
+    )
+
+    document_type_repository = Factory(
+        AlchemyRepository[DocumentType],
+        DocumentType,
+    )
+    file_repository = Factory(
+        AlchemyRepository[File],
+        File,
+    )
+    ticket_repository = Factory(
+        AlchemyRepository[Ticket],
+        Ticket,
     )

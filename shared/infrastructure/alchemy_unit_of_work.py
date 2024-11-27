@@ -1,13 +1,14 @@
 from __future__ import annotations
-from typing import Callable
-from typing import TypeVar
+
+from typing import Callable, TypeVar
 
 from sqlalchemy.orm.session import Session
 
 from models import session_factory
-from shared.domain.unit_of_work import UnitOfWork
 from shared.domain.entity import Entity
-
+from shared.domain.repository import Repository
+from shared.domain.unit_of_work import UnitOfWork
+from shared.infrastructure.alchemy_repository import AlchemyRepository
 
 E = TypeVar("E", bound=Entity)
 
@@ -30,7 +31,7 @@ class AlchemyUnitOfWork(UnitOfWork):
 
     def __enter__(self):
         self.session = self._session_factory()
-        return self
+        return super().__enter__()
 
     def __exit__(self, *args):
         super().__exit__(*args)
@@ -44,3 +45,6 @@ class AlchemyUnitOfWork(UnitOfWork):
 
     def add(self, entity_instance: E):
         self.session.add(entity_instance)
+
+    def get_repository(self, entity_class: type[E]) -> Repository[E]:
+        return AlchemyRepository[entity_class](entity_class, self.session)

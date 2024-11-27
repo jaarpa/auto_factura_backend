@@ -1,8 +1,9 @@
 import logging
-from fastapi_app.endpoints import router
+
+from dependency_injector.wiring import Provide, inject
 from fastapi import Depends
-from dependency_injector.wiring import inject
-from dependency_injector.wiring import Provide
+
+from fastapi_app.endpoints import router
 
 logger = logging.getLogger(__name__)
 

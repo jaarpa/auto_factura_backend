@@ -11,6 +11,14 @@ handlers:
     stream: ext://sys.stdout
 loggers:
   fastapi_app:
+    level: INFO
+    handlers: [console]
+    propagate: no
+  shared:
+    level: DEBUG
+    handlers: [console]
+    propagate: no
+  modules:
     level: DEBUG
     handlers: [console]
     propagate: no

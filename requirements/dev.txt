@@ -5,226 +5,292 @@
 #    pip-compile --output-file=requirements/dev.txt requirements/dev.in
 #
 aio-pika==9.4.1
-    # via -r requirements/./base.txt
-aiormq==6.8.0
+    # via -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+aioboto3==13.1.1
+    # via -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+aiobotocore[boto3]==2.13.1
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+    #   aioboto3
+aiofiles==24.1.0
+    # via
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+    #   aioboto3
+aiohappyeyeballs==2.4.3
+    # via
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+    #   aiohttp
+aiohttp==3.10.10
+    # via
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+    #   aiobotocore
+aioitertools==0.12.0
+    # via
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+    #   aiobotocore
+aiormq==6.8.1
+    # via
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   aio-pika
+aiosignal==1.3.1
+    # via
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+    #   aiohttp
 alembic==1.13.2
-    # via -r requirements/./base.txt
+    # via -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
 annotated-types==0.7.0
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   pydantic
-anyio==4.4.0
+anyio==4.6.2.post1
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   httpx
     #   starlette
     #   watchfiles
-astroid==3.2.4
-    # via pylint
 asttokens==2.4.1
     # via stack-data
-boto3==1.34.92
-    # via -r requirements/./base.txt
+attrs==24.2.0
+    # via
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+    #   aiohttp
+awscrt==0.20.11
+    # via
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+    #   botocore
+boto3[crt]==1.34.92
+    # via
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+    #   aiobotocore
 boto3-stubs==1.34.92
     # via -r requirements/dev.in
-botocore==1.34.162
+botocore[crt]==1.34.131
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+    #   aiobotocore
     #   boto3
     #   s3transfer
 botocore-stubs==1.35.21
     # via boto3-stubs
 certifi==2024.8.30
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   httpcore
     #   httpx
+cffi==1.17.1
+    # via
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+    #   cryptography
 click==8.1.7
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   typer
     #   uvicorn
+cryptography==43.0.3
+    # via
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+    #   pyjwt
 decorator==5.1.1
     # via ipython
-dill==0.3.8
-    # via pylint
-dnspython==2.6.1
+dependency-injector==4.42.0
+    # via -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+dnspython==2.7.0
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   email-validator
 email-validator==2.2.0
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   fastapi
 executing==2.1.0
     # via stack-data
 fastapi[standard]==0.112.2
-    # via -r requirements/./base.txt
+    # via -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
 fastapi-cli[standard]==0.0.5
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   fastapi
-greenlet==3.0.3
+frozenlist==1.5.0
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+    #   aiohttp
+    #   aiosignal
+greenlet==3.1.1
+    # via
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   sqlalchemy
 h11==0.14.0
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   httpcore
     #   uvicorn
-httpcore==1.0.5
+httpcore==1.0.6
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   httpx
-httptools==0.6.1
+httptools==0.6.4
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   uvicorn
 httpx==0.27.2
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   fastapi
-idna==3.8
+idna==3.10
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   anyio
     #   email-validator
     #   httpx
     #   yarl
+iniconfig==2.0.0
+    # via pytest
 ipython==8.27.0
     # via -r requirements/dev.in
-isort==5.13.2
-    # via pylint
 jedi==0.19.1
     # via ipython
 jinja2==3.1.4
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   fastapi
 jmespath==1.0.1
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   boto3
     #   botocore
-mako==1.3.5
+mako==1.3.6
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   alembic
 markdown-it-py==3.0.0
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   rich
-markupsafe==2.1.5
+markupsafe==3.0.2
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   jinja2
     #   mako
 matplotlib-inline==0.1.7
     # via ipython
-mccabe==0.7.0
-    # via pylint
 mdurl==0.1.2
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   markdown-it-py
-multidict==6.0.5
+multidict==6.1.0
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+    #   aiohttp
     #   yarl
+packaging==24.2
+    # via pytest
 pamqp==3.3.0
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   aiormq
 parso==0.8.4
     # via jedi
 pexpect==4.9.0
     # via ipython
 pillow==10.4.0
-    # via -r requirements/./base.txt
-platformdirs==4.3.6
-    # via pylint
+    # via -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+pluggy==1.5.0
+    # via pytest
 prompt-toolkit==3.0.47
     # via ipython
+propcache==0.2.0
+    # via
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+    #   yarl
+psycopg[binary]==3.2.1
+    # via -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+psycopg-binary==3.2.1
+    # via
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+    #   psycopg
 ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.3
     # via stack-data
-pydantic==2.8.2
+pycparser==2.22
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+    #   cffi
+pydantic==2.9.2
+    # via
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   fastapi
-pydantic-core==2.20.1
+pydantic-core==2.23.4
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   pydantic
 pygments==2.18.0
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   ipython
     #   rich
-pylint==3.2.7
+pyjwt[crypto]==2.9.0
+    # via -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+pytest==8.3.3
     # via -r requirements/dev.in
 python-dateutil==2.9.0.post0
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   botocore
 python-dotenv==1.0.1
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   uvicorn
-python-multipart==0.0.9
+python-multipart==0.0.17
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   fastapi
 pyyaml==6.0.2
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   uvicorn
-rich==13.8.0
+rich==13.9.4
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   typer
-s3transfer==0.10.2
+ruff==0.8.0
+    # via -r requirements/dev.in
+s3transfer==0.10.3
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   boto3
 shellingham==1.5.4
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   typer
 six==1.16.0
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   asttokens
+    #   dependency-injector
     #   python-dateutil
 sniffio==1.3.1
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   anyio
     #   httpx
 sqlalchemy==2.0.32
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   alembic
 stack-data==0.6.3
     # via ipython
-starlette==0.38.4
+starlette==0.38.6
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   fastapi
-tomlkit==0.13.2
-    # via pylint
 traitlets==5.14.3
     # via
     #   ipython
     #   matplotlib-inline
 typer==0.12.5
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   fastapi-cli
 types-awscrt==0.21.5
     # via botocore-stubs
@@ -234,38 +300,44 @@ types-s3transfer==0.10.2
     # via boto3-stubs
 typing-extensions==4.12.2
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   alembic
     #   fastapi
+    #   psycopg
     #   pydantic
     #   pydantic-core
     #   sqlalchemy
     #   typer
-urllib3==2.2.2
+urllib3==2.2.3
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   botocore
-uvicorn[standard]==0.30.6
+uvicorn[standard]==0.32.0
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   fastapi
     #   fastapi-cli
-uvloop==0.20.0
+uvloop==0.21.0
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   uvicorn
 watchfiles==0.24.0
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   uvicorn
 wcwidth==0.2.13
     # via prompt-toolkit
-websockets==13.0.1
+websockets==13.1
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   uvicorn
-yarl==1.9.7
+wrapt==1.16.0
     # via
-    #   -r requirements/./base.txt
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
+    #   aiobotocore
+yarl==1.17.1
+    # via
+    #   -r /home/jaarpa/auto_factura/auto_factura_backed/requirements/base.txt
     #   aio-pika
+    #   aiohttp
     #   aiormq

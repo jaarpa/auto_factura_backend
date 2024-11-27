@@ -1,6 +1,6 @@
-# Auto Factra
+# Auto-invoice
 
-This project is meant to be a backend service where you can upload receipts of your purchases and it would automatically create a tax declaration for that purchase.
+This project is meant to be a backend service where you can upload receipts of your purchases and it would automatically create an invoice for that purchase.
 
 # Set up
 

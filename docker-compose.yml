@@ -16,6 +16,7 @@ services:
       - 8000:8000
     environment:
       - APP_PASSWORD_FILE=/run/secrets/postgres-app-passwd
+      # - AWS_CONFIG_FILE=/home/appuser/.aws/config
     env_file:
       - .env
     secrets:
