@@ -21,6 +21,9 @@ def create_app() -> FastAPI:
     fastapi_app = FastAPI()
     setattr(fastapi_app, "container", container)
 
+    # container.wire(packages=["fastapi_app.middleware"])
+    # fastapi_app.middleware("http")(validate_jwt)
+
     fastapi_app.include_router(router)
 
     logging.info("Initialized fastapi app")
