@@ -49,7 +49,7 @@ async def callback(
             response = await client.post(url, data=data, headers=headers)
             response_data = response.json()
 
-        if response.status_code != 200:
+        if response.status_code != status.HTTP_200_OK:
             logger.error(f"Failed to exchange token: {response_data}")
             raise HTTPException(
                 status_code=response.status_code,
@@ -61,7 +61,7 @@ async def callback(
 
         if not id_token:
             logger.error("ID token not found in response")
-            raise HTTPException(status_code=400, detail="ID token not found")
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="ID token not found")
 
         # Validate tokens
         decoded_token = await jwt_validator.validate_jwt(id_token)

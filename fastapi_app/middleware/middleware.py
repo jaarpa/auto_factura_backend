@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, status
 from jwt import PyJWKClient, decode, ExpiredSignatureError, InvalidTokenError
 
 from fastapi import Depends
@@ -28,7 +28,7 @@ async def validate_jwt(request:Request,
          
         auth_header = request.headers.get("Authorization")
         if not auth_header or not auth_header.startswith("Bearer "):
-            raise HTTPException(status_code=401, detail="Authorization header missing or malformed")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authorization header missing or malformed")
         
         token = auth_header.split(" ")[1]
         
@@ -46,12 +46,12 @@ async def validate_jwt(request:Request,
         request.state.user = decoded_token
         
     except ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token has expired")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired")
     except InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
     except Exception as e:
         print(f"Unexpected error during JWT validation: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     
     return await call_next(request)
 
