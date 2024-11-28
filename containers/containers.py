@@ -21,6 +21,7 @@ class Container(DeclarativeContainer):
         packages=[
             "fastapi_app.endpoints",
             "shared.infrastructure",
+            "fastapi_app.middleware",
             "modules",
         ]
     )
@@ -45,7 +46,7 @@ class Container(DeclarativeContainer):
     # JWT VALIDATOR
     jwt_validator = Factory(
         ValidateJWT,
-        jwks_url=app_config.cognito.jwks_url,
+        region=app_config.cognito.region,
         client_id=app_config.cognito.client_id,
         user_pool_id=app_config.cognito.user_pool_id,
     )

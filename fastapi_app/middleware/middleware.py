@@ -1,5 +1,4 @@
 from fastapi import FastAPI, Request, HTTPException
-#from fastapi_app.application import app
 from jwt import PyJWKClient, decode, ExpiredSignatureError, InvalidTokenError
 
 from fastapi import Depends
@@ -12,18 +11,18 @@ PUBLIC_ROUTES = ["/","/callback","/status","/docs","/openapi.json"]
 @inject
 async def validate_jwt(request:Request,
                        call_next,
-                       jwks_url: str = Provide["app_config.cognito.client_secret"],
+                       region: str = Provide["app_config.cognito.region"],
                        client_id: str = Provide["app_config.cognito.client_id"],
                        user_pool_id: str = Provide["app_config.cognito.user_pool_id"],
                        ):
     """
     Middleware to validate JWT on each request.
     """
-    issuer: str = f"https://cognito-idp.us-east-1.amazonaws.com/{user_pool_id}"
+    jwks_url: str = f"https://cognito-idp.{region}.amazonaws.com/{user_pool_id}/.well-known/jwks.json" 
+    issuer: str = f"https://cognito-idp.{region}.amazonaws.com/{user_pool_id}"
     jwks_client = PyJWKClient(jwks_url)
     try:
-        if request.url.path in PUBLIC_ROUTES:
-            print("perfecto")
+        if request.url.path in PUBLIC_ROUTES:      
             return await call_next(request)
         # Get the token from the Authorization header
          

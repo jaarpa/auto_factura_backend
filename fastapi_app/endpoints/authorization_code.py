@@ -1,5 +1,5 @@
 from fastapi_app.endpoints import router
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.responses import JSONResponse
 import logging
 import httpx
@@ -10,6 +10,7 @@ from dependency_injector.wiring import inject
 from dependency_injector.wiring import Provide
 from modules.accounts.domain.service.interface_jwt_validator import JWTValidator
 from containers.containers import Container
+from uuid import UUID
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +18,7 @@ logger = logging.getLogger(__name__)
 @router.get("/callback")
 @inject
 async def callback(
-    request: Request,
+    code: UUID, # authorization code as a required query parameter
     jwt_validator: JWTValidator = Depends(Provide["jwt_validator"]),
     cognito_domain: str = Depends(Provide["app_config.cognito.cognito_domain"]),
     client_id: str = Depends(Provide["app_config.cognito.client_id"]),
@@ -28,18 +29,13 @@ async def callback(
     # param authorization is different from the Authorization Code, thi is for the header
     # of the token exchange request.
 
-    # Authorization code
-    authorization_code = request.query_params.get("code")
-    if not authorization_code:
-        raise HTTPException(status_code=400, detail="Authorization code not found")
-
     # Exchange the authorization code for the JSON Web Keys.
     url = f"{cognito_domain}/oauth2/token"
     data = {
         "grant_type": "authorization_code",
         "client_id": client_id,
         "client_secret": client_secret,
-        "code": authorization_code,
+        "code": str(code),
         "redirect_uri": redirect_uri,
     }
 
@@ -73,7 +69,7 @@ async def callback(
     except httpx.RequestError as exc:
         logger.error(f"An error occurred while requesting tokens: {exc}")
         raise HTTPException(
-            status_code=500, detail="Failed to exchange token due to network error"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to exchange token due to network error"
         )
 
     return JSONResponse(
