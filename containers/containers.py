@@ -1,6 +1,7 @@
 from dependency_injector.containers import DeclarativeContainer, WiringConfiguration
 from dependency_injector.providers import Configuration, Factory, Resource
 
+from modules.accounts.infrastructure.service.imple_validator import ValidateJWT
 from modules.document_types.domain.entities.document_type import DocumentType
 from modules.files.domain.entities.file import File
 from modules.tickets.domain.entities.ticket import Ticket
@@ -20,6 +21,7 @@ class Container(DeclarativeContainer):
         packages=[
             "fastapi_app.endpoints",
             "shared.infrastructure",
+            "fastapi_app.middleware",
             "modules",
         ]
     )
@@ -40,6 +42,14 @@ class Container(DeclarativeContainer):
         default_bucket=app_config.aws.default_bucket_name,
     )
     unit_of_work = Factory(AlchemyUnitOfWork)
+
+    # JWT VALIDATOR
+    jwt_validator = Factory(
+        ValidateJWT,
+        region=app_config.cognito.region,
+        client_id=app_config.cognito.client_id,
+        user_pool_id=app_config.cognito.user_pool_id,
+    )
 
     document_type_repository = Factory(
         AlchemyRepository[DocumentType],

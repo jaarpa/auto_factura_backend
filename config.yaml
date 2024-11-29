@@ -1,2 +1,10 @@
 aws:
   default_bucket_name: "auto-invoice-dev"
+cognito:
+  cognito_domain: "https://autofactura.auth.us-east-1.amazoncognito.com"
+  client_id: ${CLIENT_ID} # os.getenv("client_id")
+  client_secret: ${CLIENT_SECRET} # ("client_secret")
+  redirect_uri: ${REDIRECT_URI}
+  region: ${REGION}
+  user_pool_id: ${USER_POOL_ID}
+  authorization: ${AUTHORIZATION}
