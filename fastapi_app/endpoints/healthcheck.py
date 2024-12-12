@@ -1,4 +1,5 @@
 import logging
+
 from fastapi_app.endpoints import router
 
 logger = logging.getLogger(__name__)

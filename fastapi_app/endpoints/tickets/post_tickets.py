@@ -47,7 +47,7 @@ async def create_upload_file(
     """
 
     # TODO: Validate only logged in users upload tickets
-    user_id = UUID("b80cf7bc-cf06-48d5-a458-b8a9dc596ebf")
+    user_id = UUID("a4183418-90a1-704e-2f13-402c62ce811f")
     try:
         tickets_response = list()
         with unit_of_work as uow:
