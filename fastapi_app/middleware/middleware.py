@@ -5,7 +5,12 @@ from fastapi import HTTPException, Request, status
 from jwt import ExpiredSignatureError, InvalidTokenError, PyJWKClient, decode
 
 # Public routes.
-PUBLIC_ROUTES = ["/", "/callback", "/docs", "/openapi.json", "/status", "/tickets/"]
+PUBLIC_ROUTES = [
+    "/",
+    "/callback",
+    "/docs",
+    "/openapi.json",
+]
 # DYNAMIC_PUBLIC_ROUTES = [""]
 
 
@@ -52,7 +57,7 @@ async def validate_jwt(
         auth_header = request.headers.get("Authorization")
         logging.debug(f"Authorization header found: {auth_header}")
         if not auth_header or not auth_header.startswith("Bearer "):
-            # logging.error(f"Authorization header missing or malformed: {auth_header}")
+            logging.error(f"Authorization header missing or malformed: {auth_header}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Authorization header missing or malformed",
@@ -85,7 +90,7 @@ async def validate_jwt(
                 issuer=issuer,
             )
             # Stores the decoded token in the request.state
-            #logging.info(f"Decoded token successfully: {decoded_token}")
+            # logging.info(f"Decoded token successfully: {decoded_token}")
             request.state.user = decoded_token
             logging.info("Middleware validation successful")
 

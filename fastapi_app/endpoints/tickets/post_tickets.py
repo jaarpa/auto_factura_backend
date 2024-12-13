@@ -3,7 +3,7 @@ from typing import Annotated
 from uuid import UUID, uuid4
 
 from dependency_injector.wiring import Provide, inject
-from fastapi import Depends, HTTPException, UploadFile, status
+from fastapi import Depends, HTTPException, UploadFile, status, Request
 from fastapi import File as FastAPIFile
 from pydantic import BaseModel
 
@@ -33,6 +33,7 @@ class NewTicketResponse(BaseModel):
 @router.post("/tickets/")
 @inject
 async def create_upload_file(
+    request: Request,
     files: Annotated[
         list[UploadFile], FastAPIFile(description="Tickets to start processing")
     ],
@@ -42,12 +43,18 @@ async def create_upload_file(
     """
     Receives files to create their corresponding entities and store
     them in the cloud.
+    Authentication:
+    - Requires a valid JWT access token.
 
     :return: created file entities that were actually stored and created
     """
 
     # TODO: Validate only logged in users upload tickets
-    user_id = UUID("a4183418-90a1-704e-2f13-402c62ce811f")
+    user = request.state.user
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Unauthorized")
+    user_id = UUID(user["sub"])
+    #user_id = UUID("a4183418-90a1-704e-2f13-402c62ce811f")
     try:
         tickets_response = list()
         with unit_of_work as uow:

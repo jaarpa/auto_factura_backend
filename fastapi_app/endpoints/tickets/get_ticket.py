@@ -53,7 +53,6 @@ async def get_file_info(
     ticket_id: UUID,
     request: Request,
     ticket_repository: Repository[Ticket] = Depends(Provide["ticket_repository"]),
-    # current_user: dict = Depends(get_current_user),
 ) -> TicketResponse:
     # TODO: Validate that the user actually is the owner of this ticket
     user = getattr(request.state, "user", None)
