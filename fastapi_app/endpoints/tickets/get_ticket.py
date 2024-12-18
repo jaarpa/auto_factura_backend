@@ -54,7 +54,7 @@ async def get_file_info(
     request: Request,
     ticket_repository: Repository[Ticket] = Depends(Provide["ticket_repository"]),
 ) -> TicketResponse:
-    # TODO: Validate that the user actually is the owner of this ticket
+  
     user = getattr(request.state, "user", None)
     if not user:
         logger.error("User information not found in request state.")

@@ -49,7 +49,6 @@ async def create_upload_file(
     :return: created file entities that were actually stored and created
     """
 
-    # TODO: Validate only logged in users upload tickets
     user = request.state.user
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Unauthorized")

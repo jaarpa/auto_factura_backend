@@ -55,7 +55,7 @@ async def validate_jwt(
         # Get the token from the Authorization header
 
         auth_header = request.headers.get("Authorization")
-        logging.debug(f"Authorization header found: {auth_header}")
+        # logging.debug(f"Authorization header found: {auth_header}")
         if not auth_header or not auth_header.startswith("Bearer "):
             logging.error(f"Authorization header missing or malformed: {auth_header}")
             raise HTTPException(
@@ -80,7 +80,7 @@ async def validate_jwt(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail=f"Signing key error: {str(e)}",
             )
-        logging.debug(f"Token being validate: {token}")
+
         logging.info("Validation process started")
         try:
             decoded_token = decode(
