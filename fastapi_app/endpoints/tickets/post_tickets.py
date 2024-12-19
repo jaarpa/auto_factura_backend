@@ -1,9 +1,10 @@
+import datetime
 import logging
 from typing import Annotated
 from uuid import UUID, uuid4
 
 from dependency_injector.wiring import Provide, inject
-from fastapi import Depends, HTTPException, UploadFile, status, Request
+from fastapi import Depends, HTTPException, Request, UploadFile, status
 from fastapi import File as FastAPIFile
 from pydantic import BaseModel
 
@@ -21,10 +22,27 @@ from shared.domain.unit_of_work import UnitOfWork
 
 logger = logging.getLogger(__name__)
 
+
+class CatalogResponse(BaseModel):
+    id: UUID
+    label: str
+    name: str
+    model_config = {"from_attributes": True}
+
+
+class FileResponse(BaseModel):
+    id: UUID
+    name: str
+    document_type: CatalogResponse
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+    model_config = {"from_attributes": True}
+
+
 # TODO: Refactor to return also the file data.
 class NewTicketResponse(BaseModel):
     id: UUID
-    file_id: UUID
+    file: FileResponse
     data: dict
     model_config = {"from_attributes": True}
 
@@ -51,11 +69,13 @@ async def create_upload_file(
 
     user = request.state.user
     if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Unauthorized")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized"
+        )
     user_id = UUID(user["sub"])
-    #user_id = UUID("a4183418-90a1-704e-2f13-402c62ce811f")
+    # user_id = UUID("a4183418-90a1-704e-2f13-402c62ce811f")
     try:
-        tickets_response = list()
+        tickets_response = []
         with unit_of_work as uow:
             user_repository = uow.get_repository(User)
             user = user_repository.get(user_id)
@@ -86,8 +106,27 @@ async def create_upload_file(
                 )
                 ticket_entity.file = file_entity
                 cloud_storage.put_file_data(file_entity, file.file)
+
+                file_response = FileResponse(
+                    id=file_entity.id,
+                    name=file_entity.name,
+                    document_type=CatalogResponse(
+                        id=file_entity.document_type_id,
+                        label=document_type_name,
+                        name=document_type_name,
+                    ),
+                    created_at=file_entity.created_at,
+                    updated_at=file_entity.updated_at,
+                )
+                ticket_response = NewTicketResponse(
+                    id=ticket_entity.id,
+                    file=file_response,
+                    data={},
+                )
+                tickets_response.append(ticket_response)
+
                 uow.add(ticket_entity)
-                tickets_response.append(NewTicketResponse.model_validate(ticket_entity))
+
             uow.commit()
         return tickets_response
     except FileUploadException as e:

@@ -13,7 +13,6 @@ from shared.domain.repository import Repository
 logger = logging.getLogger(__name__)
 
 
-# TODO: Refactor into a more generic Catalog response
 class CatalogResponse(BaseModel):
     id: UUID
     label: str
