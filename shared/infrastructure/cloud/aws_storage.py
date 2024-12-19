@@ -11,6 +11,7 @@ from shared.domain.cloud.storage_exceptions import FileUploadException
 
 logger = logging.getLogger(__name__)
 
+
 class AWSS3(CloudStorage):
     """
     Amazon S3 client for handling files.
@@ -29,7 +30,8 @@ class AWSS3(CloudStorage):
         :return: In-memory file-like object with the actual file data.
         """
         file_data = BytesIO()
-        bucket_name = file.config.get("aws", {}).get("bucket_name")
+        logger.debug(f"File config: {file.config}")
+        bucket_name = file.config.get("bucket")
         key = file.key
         self.__s3_client.download_fileobj(bucket_name, key, file_data)
         return file_data
