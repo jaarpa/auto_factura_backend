@@ -29,3 +29,22 @@
         "email": "1998.ruben26@gmail.com"
     }
 }
+
+{
+    "id": "ff42311f-462d-4ee6-9b2e-ade0042344b7",
+    "file": {
+        "id": "ff42311f-462d-4ee6-9b2e-ade0042344b7",
+        "name": "Captura de pantalla 2024-12-12 120552.png",
+        "document_type": {
+            "id": "a9e39cc9-1749-4da6-b271-cd71cd0481df",
+            "label": "Ticket",
+            "name": "ticket"
+        },
+        "created_at": "2024-12-12T18:37:16.371883",
+        "updated_at": "2024-12-12T18:37:16.371891"
+    },
+    "issuer": null,
+    "data": {},
+    "created_at": "2024-12-12T18:37:16.371924",
+    "updated_at": "2024-12-12T18:37:16.371927"
+}

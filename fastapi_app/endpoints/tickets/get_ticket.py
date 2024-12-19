@@ -14,14 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 # TODO: Refactor into a more generic Catalog response
-class IssuerResponse(BaseModel):
-    id: UUID
-    label: str
-    name: str
-    model_config = {"from_attributes": True}
-
-
-class DocumentTypeResponse(BaseModel):
+class CatalogResponse(BaseModel):
     id: UUID
     label: str
     name: str
@@ -31,7 +24,7 @@ class DocumentTypeResponse(BaseModel):
 class FileResponse(BaseModel):
     id: UUID
     name: str
-    document_type: DocumentTypeResponse
+    document_type: CatalogResponse
     created_at: datetime.datetime
     updated_at: datetime.datetime
     model_config = {"from_attributes": True}
@@ -40,7 +33,7 @@ class FileResponse(BaseModel):
 class TicketResponse(BaseModel):
     id: UUID
     file: FileResponse
-    issuer: IssuerResponse | None
+    issuer: CatalogResponse | None
     data: dict
     created_at: datetime.datetime
     updated_at: datetime.datetime
@@ -54,7 +47,6 @@ async def get_file_info(
     request: Request,
     ticket_repository: Repository[Ticket] = Depends(Provide["ticket_repository"]),
 ) -> TicketResponse:
-  
     user = getattr(request.state, "user", None)
     if not user:
         logger.error("User information not found in request state.")
