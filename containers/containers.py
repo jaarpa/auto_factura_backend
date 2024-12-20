@@ -32,10 +32,22 @@ class Container(DeclarativeContainer):
     logger: Resource = Resource("logging.config.dictConfig", logger_config)
 
     aws_session: Resource = Resource("boto3.session.Session")
+   
     s3_client = Resource(
         aws_session.provided.client.call(),
         service_name="s3",
     )
+    rekognition_client = Resource(
+        aws_session.provided.client.call(),
+        service_name="rekognition",
+    )
+    
+    rekognition_service = Factory(
+        RekognitionServiceImpl,
+        aws_session=aws_session,
+        model_arn=app_config.aws.rekognition_model_arn,
+    )
+    
     cloud_storage = Factory(
         AWSS3,
         aws_session=aws_session,
@@ -63,9 +75,4 @@ class Container(DeclarativeContainer):
         AlchemyRepository[Ticket],
         Ticket,
     )
-    rekognition_service = Factory(
-        RekognitionServiceImpl,
-        region_name = app_config.aws.region,
-        aws_access_key_id = app_config.aws.access_key_id,
-        aws_secret_access_key = app_config.aws.secret_access_key,
-    )
+  

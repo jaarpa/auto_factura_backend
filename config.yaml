@@ -1,5 +1,6 @@
 aws:
   default_bucket_name: "auto-invoice-dev"
+  rekognition_model_arn: ${REKOGNITION_MODEL_ARN}
 cognito:
   cognito_domain: "https://autofactura.auth.us-east-1.amazoncognito.com"
   client_id: ${CLIENT_ID} # os.getenv("client_id")

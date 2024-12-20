@@ -9,18 +9,19 @@ from fastapi_app.endpoints import router
 from shared.domain.cloud.storage import CloudStorage
 from shared.domain.cloud.rekognition import RekognitionService
 from shared.domain.unit_of_work import UnitOfWork
-from modules.files.domain.entities.file import File
+from modules.tickets.domain.entities.ticket import Ticket
 
 logger = logging.getLogger(__name__)
 
 class RekognitionResponse(BaseModel):
-    labels: list[dict]  
+    ticket_id: UUID
+    results: dict  
     model_config = {"from_attributes": True}
     
 @router.post("/rekognition/analyze/")
 @inject
 async def analyze_image(
-    file_id: UUID,
+    ticket_id: UUID,
     request: Request,
     unit_of_work: UnitOfWork = Depends(Provide["unit_of_work"]),
     cloud_storage: CloudStorage = Depends(Provide["cloud_storage"]),
@@ -44,9 +45,9 @@ async def analyze_image(
     try: 
         with unit_of_work as uow:
             # Recover file entity
-            file_repository = uow.get_repository(File)
-            file_entity =  file_repository.get(file_id)
-            if not file_entity:
+            ticket_repository = uow.get_repository(Ticket)
+            ticket_entity =  ticket_repository.get(ticket_id)
+            if not ticket_entity:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND, detail="File not found"
                 )
