@@ -53,7 +53,7 @@ async def create_upload_file(
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Unauthorized")
     user_id = UUID(user["sub"])
-    #user_id = UUID("a4183418-90a1-704e-2f13-402c62ce811f")
+
     try:
         tickets_response = list()
         with unit_of_work as uow:
