@@ -3,7 +3,7 @@ from typing import Annotated
 from uuid import UUID, uuid4
 
 from dependency_injector.wiring import Provide, inject
-from fastapi import Depends, HTTPException, UploadFile, status, Request
+from fastapi import Depends, HTTPException, Request, UploadFile, status
 from fastapi import File as FastAPIFile
 from pydantic import BaseModel
 
