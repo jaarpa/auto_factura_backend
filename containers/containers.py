@@ -8,7 +8,7 @@ from modules.tickets.domain.entities.ticket import Ticket
 from shared.infrastructure.alchemy_repository import AlchemyRepository
 from shared.infrastructure.alchemy_unit_of_work import AlchemyUnitOfWork
 from shared.infrastructure.cloud.aws_storage import AWSS3
-
+from shared.infrastructure.cloud.rekognition_impl import RekognitionServiceImpl
 
 class Container(DeclarativeContainer):
     """
@@ -62,4 +62,10 @@ class Container(DeclarativeContainer):
     ticket_repository = Factory(
         AlchemyRepository[Ticket],
         Ticket,
+    )
+    rekognition_service = Factory(
+        RekognitionServiceImpl,
+        region_name = app_config.aws.region,
+        aws_access_key_id = app_config.aws.access_key_id,
+        aws_secret_access_key = app_config.aws.secret_access_key,
     )
