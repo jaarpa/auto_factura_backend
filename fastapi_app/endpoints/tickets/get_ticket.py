@@ -62,20 +62,15 @@ async def get_file_info(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User information not found in request state",
         )
-    ticket = ticket_repository.get(ticket_id)
-
+    
+    user_id = UUID(user["sub"])
+    
+    #Search for the ticket with the user_id and ticket_id
+    ticket = ticket_repository.get_by_fields(user_id=user_id, id= ticket_id) 
+    
     if not ticket:
-        logger.warning(f"Ticket with ID {ticket_id} not found.")
-        raise HTTPException(status.HTTP_404_NOT_FOUND, f"No ticket with id {ticket_id}")
-
-    logger.info(f"Authenticated user ID: {type(user['sub'])}")
-    logger.info(f" Ticket owner ID: {type(ticket.user_id)}")
-
-    if str(ticket.user_id) != user["sub"]:  # "sub" Contains the user ID in Cognito.
-        logger.warning(f"User {user['sub']} tried to access ticket {ticket_id}.")
-        raise HTTPException(
-            status.HTTP_403_FORBIDDEN, detail="You do not have access to this ticket."
-        )
+        logger.warning(f'Ticket with ID {ticket_id} not fount or access denied for user {user_id}')
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Ticket not found or access denied. ")
 
     logger.info(f"User {user['sub']} accessed ticket {ticket_id} successfully")
     return TicketResponse.model_validate(ticket)

@@ -10,7 +10,8 @@ from fastapi_app.endpoints import router
 from modules.files.domain.entities.file import File
 from modules.tickets.domain.entities.ticket import Ticket
 from shared.domain.cloud.storage import CloudStorage
-from shared.domain.unit_of_work import UnitOfWork
+from shared.infrastructure.alchemy_repository import AlchemyRepository
+from shared.domain.repository import Repository
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +21,7 @@ async def download_file(
     ticket_id: UUID,
     request: Request,
     cloud_storage: CloudStorage = Depends(Provide["cloud_storage"]),
-    unit_of_work: UnitOfWork = Depends(Provide["unit_of_work"]),
+    ticket_repository: Repository[Ticket] = Depends(Provide["ticket_repository"]),
 ):
     """
     Endpoint to download the file associated with a specific ticket.
@@ -36,52 +37,26 @@ async def download_file(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized"
         )
     user_id = UUID(user["sub"])
-
+    
     try:
-        with unit_of_work as uow:
-            # Retrieve the ticket entity
-            ticket_repository = uow.get_repository(Ticket)
-            ticket = ticket_repository.get(ticket_id) 
-            if not ticket:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Ticket not found"
-                )
-
-            # Retrieve the associated file entity
-            file_repository = uow.get_repository(File)
-            file_entity = file_repository.get(ticket.file_id)
-            if not file_entity:
-                logger.error(f"Ticket not found for ID: {ticket_id}")
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"No file associated with ticket{ticket_id}"
-                )
-            #Validate that the ticket belongs to the authenticated user
-            if ticket.user_id != user_id:
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="You do not have permission to access this ticket.",
-                )
-
-            # Download the file using cloud storage
-            
-            file_data = cloud_storage.get_file_data(file_entity)
-            if not file_data:
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="Failed to retrieve the file from cloud storage.",
-                )
-            file_data.seek(0)  # Reset file pointer in memory
-            
-            # Return the file as a streaming response
-            return StreamingResponse(
-                file_data,
-                media_type="application/octet-stream",
-                headers={
-                    "Content-Disposition": f'attachment; filename="{file_entity.name}"'
-                },
-            )
+        ticket = ticket_repository.get_by_fields(user_id=user_id, id=ticket_id)
+        if not ticket:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Ticket not found")
+        
+        # Download the file using cloud storage
+        
+        file_data = cloud_storage.get_file_data(ticket.file)
+        
+        file_data.seek(0)  # Reset file pointer in memory
+        
+        # Return the file as a streaming response
+        return StreamingResponse(
+            file_data,
+            media_type="application/octet-stream",
+            headers={
+                "Content-Disposition": f'attachment; filename="{ticket.file.name}"'
+            },
+        )
     except Exception as e:
         logger.error(f"Error downloading file for ticket {ticket_id}: {e}")
         raise HTTPException(
