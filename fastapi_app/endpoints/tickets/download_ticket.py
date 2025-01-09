@@ -2,11 +2,10 @@ import logging
 from uuid import UUID
 
 from dependency_injector.wiring import Provide, inject
-from fastapi import Depends, HTTPException, status, Request
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.responses import StreamingResponse
 
 from fastapi_app.endpoints import router
-
 from modules.files.domain.entities.file import File
 from modules.tickets.domain.entities.ticket import Ticket
 from shared.domain.cloud.storage import CloudStorage
