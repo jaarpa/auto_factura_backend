@@ -43,15 +43,8 @@ class AlchemyRepository[E_co](Repository[E_co]):
 
     def add(self, entity_instance: E_co):
         self._session.add(entity_instance)
-    
-    def all(self) -> Collection[E_co]:
-        """_summary_
-        Retrieves all entries of entity from the database.
 
-        Returns:
-            Collection[E_co]: _description_
-        """
+    def all(self) -> Collection[E_co]:
         stmt = select(self._entity_class)
         results = self._session.scalars(stmt).all()
         return results
-    
