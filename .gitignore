@@ -165,6 +165,7 @@ cython_debug/
 *.png
 
 #folders
+files_test/
 archivos_uso/
 
 # Secret files

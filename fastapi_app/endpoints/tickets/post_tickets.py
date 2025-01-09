@@ -107,22 +107,24 @@ async def create_upload_file(
                 ticket_entity.file = file_entity
                 cloud_storage.put_file_data(file_entity, file.file)
 
-                file_response = FileResponse(
-                    id=file_entity.id,
-                    name=file_entity.name,
-                    document_type=CatalogResponse(
-                        id=file_entity.document_type_id,
-                        label=document_type_name,
-                        name=document_type_name,
-                    ),
-                    created_at=file_entity.created_at,
-                    updated_at=file_entity.updated_at,
+                ticket_response = NewTicketResponse.model_validate(
+                    {
+                        "id": ticket_entity.id,
+                        "file": {
+                            "id": file_entity.id,
+                            "name": file_entity.name,
+                            "document_type": {
+                                "id": file_entity.document_type_id,
+                                "label": document_type_name,
+                                "name": document_type_name,
+                            },
+                            "created_at": file_entity.created_at,
+                            "updated_at": file_entity.updated_at,
+                        },
+                        "data":{},
+                    }
                 )
-                ticket_response = NewTicketResponse(
-                    id=ticket_entity.id,
-                    file=file_response,
-                    data={},
-                )
+                
                 tickets_response.append(ticket_response)
 
                 uow.add(ticket_entity)
