@@ -6,10 +6,8 @@ from fastapi import Depends, HTTPException, Request, status
 from fastapi.responses import StreamingResponse
 
 from fastapi_app.endpoints import router
-from modules.files.domain.entities.file import File
 from modules.tickets.domain.entities.ticket import Ticket
 from shared.domain.cloud.storage import CloudStorage
-from shared.infrastructure.alchemy_repository import AlchemyRepository
 from shared.domain.repository import Repository
 
 logger = logging.getLogger(__name__)

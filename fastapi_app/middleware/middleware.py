@@ -11,7 +11,6 @@ PUBLIC_ROUTES = [
     "/docs",
     "/openapi.json",
 ]
-
 # @app.middleware("http")
 @inject
 async def validate_jwt(

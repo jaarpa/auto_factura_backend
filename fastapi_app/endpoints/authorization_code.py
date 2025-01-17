@@ -55,6 +55,8 @@ async def callback(
 
         # Get the ID Token
         id_token = response_data.get("id_token")
+        access_token = response_data.get("access_token")
+        logger.info(f"this is the access token: {access_token}")
 
         if not id_token:
             logger.error("ID token not found in response")
