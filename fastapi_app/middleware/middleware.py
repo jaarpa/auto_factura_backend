@@ -11,26 +11,6 @@ PUBLIC_ROUTES = [
     "/docs",
     "/openapi.json",
 ]
-# DYNAMIC_PUBLIC_ROUTES = [""]
-
-
-# def is_public_route(path: str) -> bool:
-#     """
-#     Check if the path is in the list of public routes
-#     or matches dynamic public route patterns.
-#     """
-#     # Check static routes
-#     if path in PUBLIC_ROUTES:
-#         return True
-
-#     # Check dynamic routes
-#     for dynamic_route in DYNAMIC_PUBLIC_ROUTES:
-#         if path.startswith(dynamic_route):
-#             return True
-
-#     return False
-
-
 # @app.middleware("http")
 @inject
 async def validate_jwt(

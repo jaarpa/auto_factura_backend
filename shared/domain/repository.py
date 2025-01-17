@@ -53,3 +53,14 @@ class Repository[E_co](Protocol):
 
         :param entity_instance: Updated entity instance.
         """
+
+    @abstractmethod
+    def all(self) -> Collection[E_co]:
+        """
+        This method should be implemented to return a collection containing all instances of the entity managed by
+        the repository.
+        It does not take any filters or conditions and fetches all available records.
+
+        Returns:
+        Collection[E_co]: A collection of all entity instances stored in the repository.
+        """

@@ -160,15 +160,17 @@ cython_debug/
 #.idea/
 
 # files
-
+**/token_validation.json
 *.jpg
 *.png
 
 #folders
 files_test/
 archivos_uso/
+**/endpoint_test/
 
 # Secret files
 **/secrets/*
 
-archivos_prueba
+**/archivos_prueba/
+

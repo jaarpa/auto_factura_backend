@@ -1,16 +1,13 @@
-from fastapi_app.endpoints import router
-from fastapi import FastAPI, Request, HTTPException, status
-from fastapi.responses import JSONResponse
 import logging
-import httpx
-import json
-import jwt
-from fastapi import Depends
-from dependency_injector.wiring import inject
-from dependency_injector.wiring import Provide
-from modules.accounts.domain.service.interface_jwt_validator import JWTValidator
-from containers.containers import Container
 from uuid import UUID
+
+import httpx
+from dependency_injector.wiring import Provide, inject
+from fastapi import Depends, HTTPException, status
+from fastapi.responses import JSONResponse
+
+from fastapi_app.endpoints import router
+from modules.accounts.domain.service.interface_jwt_validator import JWTValidator
 
 logger = logging.getLogger(__name__)
 
