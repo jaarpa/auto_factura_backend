@@ -3,7 +3,7 @@ import logging
 from uuid import UUID
 
 from dependency_injector.wiring import Provide, inject
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from pydantic import BaseModel
 
 from fastapi_app.endpoints import router
@@ -11,6 +11,7 @@ from modules.tickets.domain.entities.ticket import Ticket
 from shared.domain.repository import Repository
 
 logger = logging.getLogger(__name__)
+
 
 # TODO: Refactor into a more generic Catalog response
 class IssuerResponse(BaseModel):
@@ -50,10 +51,26 @@ class TicketResponse(BaseModel):
 @inject
 async def get_file_info(
     ticket_id: UUID,
+    request: Request,
     ticket_repository: Repository[Ticket] = Depends(Provide["ticket_repository"]),
 ) -> TicketResponse:
-    # TODO: Validate that the user actually is the owner of this ticket
-    ticket = ticket_repository.get(ticket_id)
+  
+    user = getattr(request.state, "user", None)
+    if not user:
+        logger.error("User information not found in request state.")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User information not found in request state",
+        )
+    
+    user_id = UUID(user["sub"])
+    
+    #Search for the ticket with the user_id and ticket_id
+    ticket = ticket_repository.get_by_fields(user_id=user_id, id= ticket_id) 
+    
     if not ticket:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, f"No ticket with id {ticket_id}")
+        logger.warning(f'Ticket with ID {ticket_id} not fount or access denied for user {user_id}')
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Ticket not found or access denied. ")
+
+    logger.info(f"User {user['sub']} accessed ticket {ticket_id} successfully")
     return TicketResponse.model_validate(ticket)
