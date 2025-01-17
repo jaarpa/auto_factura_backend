@@ -7,8 +7,9 @@ from modules.files.domain.entities.file import File
 from modules.tickets.domain.entities.ticket import Ticket
 from shared.infrastructure.alchemy_repository import AlchemyRepository
 from shared.infrastructure.alchemy_unit_of_work import AlchemyUnitOfWork
+from shared.infrastructure.cloud.aws_classification import AWSRekognition
 from shared.infrastructure.cloud.aws_storage import AWSS3
-from shared.infrastructure.cloud.rekognition_impl import RekognitionServiceImpl
+
 
 class Container(DeclarativeContainer):
     """
@@ -32,22 +33,18 @@ class Container(DeclarativeContainer):
     logger: Resource = Resource("logging.config.dictConfig", logger_config)
 
     aws_session: Resource = Resource("boto3.session.Session")
-   
+
     s3_client = Resource(
         aws_session.provided.client.call(),
         service_name="s3",
     )
-    rekognition_client = Resource(
-        aws_session.provided.client.call(),
-        service_name="rekognition",
-    )
     
-    rekognition_service = Factory(
-        RekognitionServiceImpl,
+    ticket_sorting_service = Factory(
+        AWSRekognition,
         aws_session=aws_session,
         model_arn=app_config.aws.rekognition_model_arn,
     )
-    
+
     cloud_storage = Factory(
         AWSS3,
         aws_session=aws_session,
@@ -75,4 +72,3 @@ class Container(DeclarativeContainer):
         AlchemyRepository[Ticket],
         Ticket,
     )
-  

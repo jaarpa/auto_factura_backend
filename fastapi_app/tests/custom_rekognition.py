@@ -1,15 +1,16 @@
 import boto3
 import json 
 
-rekognition_client = boto3.client('rekognition')
-model_arn = 'arn:aws:rekognition:us-east-1:767398010748:project/ticket_classification/version/ticket_classification.2024-08-19T20.15.30/1724120129902'
+session = boto3.Session(profile_name='autoinvoice-dev')
+rekognition_client = session.client('rekognition', region_name='us-east-2')
+model_arn = 'arn:aws:rekognition:us-east-2:600627332804:project/rek_autoinvoice_dev/version/rek_autoinvoice_dev.2025-01-15T12.43.05/1736966583873'
 
 response = rekognition_client.detect_custom_labels(
     ProjectVersionArn=model_arn,
     Image={
         'S3Object': {
-            'Bucket': 'custom-labels-console-us-east-1-f23390f701',
-            'Name': 'test/coppel/Alfonso Ikayka Martínez Aragón pgg1_Coppel - Alfonso Ikayka Martinez Aragón.jpeg'
+            'Bucket': 's3-dev-rekognition',
+            'Name': 'test/walmart/IMG20240812214510.jpg'
         }
     },
     MinConfidence=10,  # Puedes ajustar el umbral de confianza mínimo

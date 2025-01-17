@@ -1,0 +1,58 @@
+{
+    "message": "Token validated successfully",
+    "decoded_token": {
+        "at_hash": "coHFXYnijMWbbP8yddWfaA",
+        "sub": "a4183418-90a1-704e-2f13-402c62ce811f",
+        "cognito:groups": [
+            "us-east-1_RSQXxoYER_Google"
+        ],
+        "email_verified": false,
+        "iss": "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_RSQXxoYER",
+        "cognito:username": "google_117656830482969101043",
+        "origin_jti": "e22345e0-24aa-4547-a5ff-c69ba8dac967",
+        "aud": "5g70h8hdc94pfll9vq42n7pons",
+        "identities": [
+            {
+                "dateCreated": "1727234803613",
+                "userId": "117656830482969101043",
+                "providerName": "Google",
+                "providerType": "Google",
+                "issuer": null,
+                "primary": "true"
+            }
+        ],
+        "token_use": "id",
+        "auth_time": 1732819206,
+        "exp": 1732905606,
+        "iat": 1732819206,
+        "jti": "ed446935-3a7d-496c-bbf9-539f5c5813d2",
+        "email": "1998.ruben26@gmail.com"
+    }
+}
+
+{
+    "id": "ff42311f-462d-4ee6-9b2e-ade0042344b7",
+    "file": {
+        "id": "ff42311f-462d-4ee6-9b2e-ade0042344b7",
+        "name": "Captura de pantalla 2024-12-12 120552.png",
+        "document_type": {
+            "id": "a9e39cc9-1749-4da6-b271-cd71cd0481df",
+            "label": "Ticket",
+            "name": "ticket"
+        },
+        "created_at": "2024-12-12T18:37:16.371883",
+        "updated_at": "2024-12-12T18:37:16.371891"
+    },
+    "issuer": null,
+    "data": {},
+    "created_at": "2024-12-12T18:37:16.371924",
+    "updated_at": "2024-12-12T18:37:16.371927"
+}
+
+[
+    {
+        "id": "07966e18-9711-4093-a028-7c4faab15d5f",
+        "file_id": "07966e18-9711-4093-a028-7c4faab15d5f",
+        "data": {}
+    }
+]
