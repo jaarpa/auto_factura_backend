@@ -121,10 +121,10 @@ class JWTAuthBackend(AuthenticationBackend):
                 )
         except Exception as e:
             # We know for suer it does not have a token
-            logger.exception(e)
             if public_route:
                 return AuthCredentials(), UnauthenticatedUser()
             # If not public route stop request.
+            logger.exception(e)
             raise AuthenticationError("Unauthorized access") from e
 
         # At this point we know for sure it has a token
