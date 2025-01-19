@@ -1,7 +1,9 @@
 from dependency_injector.containers import DeclarativeContainer, WiringConfiguration
 from dependency_injector.providers import Configuration, Factory, Resource
 
-from modules.accounts.infrastructure.service.imple_validator import ValidateJWT
+from modules.accounts.infrastructure.services.cognito_jwt_validator import (
+    CognitoJWTValidator,
+)
 from modules.document_types.domain.entities.document_type import DocumentType
 from modules.files.domain.entities.file import File
 from modules.tickets.domain.entities.ticket import Ticket
@@ -45,10 +47,10 @@ class Container(DeclarativeContainer):
 
     # JWT VALIDATOR
     jwt_validator = Factory(
-        ValidateJWT,
-        region=app_config.cognito.region,
+        CognitoJWTValidator,
         client_id=app_config.cognito.client_id,
-        user_pool_id=app_config.cognito.user_pool_id,
+        issuer_url=app_config.cognito.issuer_url,
+        jwks_url=app_config.cognito.jwks_url,
     )
 
     document_type_repository = Factory(
