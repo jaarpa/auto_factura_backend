@@ -3,11 +3,12 @@ from typing import Annotated
 from uuid import UUID
 
 from dependency_injector.wiring import Provide, inject
-from fastapi import Depends, Form, HTTPException, Request, UploadFile, status
+from fastapi import Depends, Form, HTTPException, UploadFile, status
 from fastapi import File as FastAPIFile
 from pydantic import BaseModel
 
 from fastapi_app.endpoints import router
+from fastapi_app.middlewares.authorization import get_current_user_id
 from modules.document_types.domain.entities.document_type import DocumentType
 from modules.files.domain.entities.file import File
 from shared.domain.cloud.storage import CloudStorage
@@ -30,18 +31,14 @@ async def create_upload_file(
     ],
     file_id: Annotated[UUID, Form()],
     document_type_name: Annotated[str, Form()],
-    request: Request,
+    user_id: UUID = Depends(get_current_user_id),
     cloud_storage: CloudStorage = Depends(Provide["cloud_storage"]),
     unit_of_work: UnitOfWork = Depends(Provide["unit_of_work"]),
 ) -> FileResponse:
     """
     Receives files to create their corresponding entities and store
     them in the cloud.
-
-    :return: created file entities that were actually stored and created
     """
-
-    user_data = request.state.user
 
     try:
         with unit_of_work as uow:

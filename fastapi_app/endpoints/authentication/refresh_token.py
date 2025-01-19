@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from fastapi_app.endpoints import router
-from modules.accounts.domain.services.jwt_validator import JWTValidator
+from modules.authorization.domain.services.jwt_validator import JWTValidator
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ async def refresh_access_tokens(
         Body(description="Refresh token from previous authentication", embed=True),
     ],
     jwt_validator: JWTValidator = Depends(Provide["jwt_validator"]),
-    token_url: str = Depends(Provide["app_config.cognito.cognito_token_url"]),
+    token_url: str = Depends(Provide["app_config.cognito.token_url"]),
     client_id: str = Depends(Provide["app_config.cognito.client_id"]),
     client_secret: str = Depends(Provide["app_config.cognito.client_secret"]),
     redirect_uri: str = Depends(Provide["app_config.cognito.redirect_uri"]),
@@ -80,7 +80,10 @@ async def refresh_access_tokens(
             )
 
         # Validate tokens
-        await jwt_validator.decode_jwt(id_token)
+        # Only the id_token has an audience
+        await jwt_validator.decode_jwt(id_token, verify_aud=True)
+        # When not having an audience verifies client_id by default
+        await jwt_validator.decode_jwt(access_token)
 
     except httpx.RequestError as exc:
         logger.error(f"An error occurred while requesting tokens: {exc}")

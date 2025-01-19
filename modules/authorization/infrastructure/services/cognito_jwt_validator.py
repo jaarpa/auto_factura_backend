@@ -1,6 +1,6 @@
 import jwt
 
-from modules.accounts.domain.services.jwt_validator import JWTValidator
+from modules.authorization.domain.services.jwt_validator import JWTValidator
 
 
 class CognitoJWTValidator(JWTValidator):

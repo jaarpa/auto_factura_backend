@@ -1,9 +1,11 @@
 import logging
 
 from fastapi import FastAPI
+from starlette.middleware.authentication import AuthenticationMiddleware
 
 from containers import Container
 from fastapi_app.endpoints import router
+from fastapi_app.middlewares.authorization import JWTAuthBackend
 
 
 def create_app() -> FastAPI:
@@ -21,7 +23,7 @@ def create_app() -> FastAPI:
     fastapi_app = FastAPI()
     setattr(fastapi_app, "container", container)
 
-    # fastapi_app.middleware("http")(validate_jwt)
+    fastapi_app.add_middleware(AuthenticationMiddleware, backend=JWTAuthBackend())
 
     fastapi_app.include_router(router)
 

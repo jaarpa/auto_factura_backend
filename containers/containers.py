@@ -1,7 +1,7 @@
 from dependency_injector.containers import DeclarativeContainer, WiringConfiguration
 from dependency_injector.providers import Configuration, Factory, Resource
 
-from modules.accounts.infrastructure.services.cognito_jwt_validator import (
+from modules.authorization.infrastructure.services.cognito_jwt_validator import (
     CognitoJWTValidator,
 )
 from modules.document_types.domain.entities.document_type import DocumentType
@@ -23,7 +23,7 @@ class Container(DeclarativeContainer):
         packages=[
             "fastapi_app.endpoints",
             "shared.infrastructure",
-            "fastapi_app.middleware",
+            "fastapi_app.middlewares",
             "modules",
         ]
     )
