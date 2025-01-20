@@ -3,10 +3,11 @@ import logging
 from uuid import UUID
 
 from dependency_injector.wiring import Provide, inject
-from fastapi import Depends, HTTPException, Request, status
+from fastapi import Depends, HTTPException, status
 from pydantic import BaseModel
 
 from fastapi_app.endpoints import router
+from fastapi_app.middlewares.authorization import get_current_user_id
 from modules.tickets.domain.entities.ticket import Ticket
 from shared.domain.repository import Repository
 
@@ -39,29 +40,24 @@ class TicketResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
-@router.get("/ticket/{ticket_id}/")
+@router.get("/ticket/{ticket_id}/", response_model=TicketResponse)
 @inject
 async def get_file_info(
     ticket_id: UUID,
-    request: Request,
+    user_id: UUID = Depends(get_current_user_id),
     ticket_repository: Repository[Ticket] = Depends(Provide["ticket_repository"]),
-) -> TicketResponse:
-    user = getattr(request.state, "user", None)
-    if not user:
-        logger.error("User information not found in request state.")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User information not found in request state",
-        )
-    
-    user_id = UUID(user["sub"])
-    
+) -> Ticket:
+    """
+    Retrieves information on the ticket with the specified `ticket_id`
+    only returns the information if the logged in user is the owner of
+    the ticket.
+    """
     #Search for the ticket with the user_id and ticket_id
-    ticket = ticket_repository.get_by_fields(user_id=user_id, id= ticket_id) 
-    
+    ticket = ticket_repository.get_by_fields(user_id=user_id, id=ticket_id)
+
     if not ticket:
         logger.warning(f'Ticket with ID {ticket_id} not fount or access denied for user {user_id}')
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Ticket not found or access denied. ")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Ticket not found.")
 
-    logger.info(f"User {user['sub']} accessed ticket {ticket_id} successfully")
-    return TicketResponse.model_validate(ticket)
+    logger.debug(f"User {user_id} accessed ticket {ticket_id} successfully")
+    return ticket

@@ -1,10 +1,20 @@
+app:
+  debug: ${DEBUG}
+  environment: ${APP_ENVIRONMENT:production}
+  domain: ${APP_DOMAIN}
+  port: ${APP_PORT}
+  jwt_signature_validation: ${APP_SECURE_ENDPOINTS:True}
 aws:
   default_bucket_name: "auto-invoice-dev"
 cognito:
-  cognito_domain: "https://autofactura.auth.us-east-1.amazoncognito.com"
-  client_id: ${CLIENT_ID} # os.getenv("client_id")
-  client_secret: ${CLIENT_SECRET} # ("client_secret")
-  redirect_uri: ${REDIRECT_URI}
+  domain: ${COGNITO_DOMAIN}
+  authorization_url: ${COGNITO_DOMAIN}/oauth2/authorize
+  token_url: ${COGNITO_DOMAIN}/oauth2/token
+  refresh_url: ${COGNITO_DOMAIN}/oauth2/token
+  issuer_url: https://cognito-idp.${REGION}.amazonaws.com/${USER_POOL_ID}
+  jwks_url: https://cognito-idp.${REGION}.amazonaws.com/${USER_POOL_ID}/.well-known/jwks.json
+  client_id: ${CLIENT_ID}
+  client_secret: ${CLIENT_SECRET}
+  redirect_uri: ${APP_DOMAIN}${REDIRECT_URI}
   region: ${REGION}
   user_pool_id: ${USER_POOL_ID}
-  authorization: ${AUTHORIZATION}
