@@ -14,7 +14,7 @@ cognito:
   issuer_url: https://cognito-idp.${REGION}.amazonaws.com/${USER_POOL_ID}
   jwks_url: https://cognito-idp.${REGION}.amazonaws.com/${USER_POOL_ID}/.well-known/jwks.json
   client_id: ${CLIENT_ID}
-  client_secret: ${APP_DOMAIN}${CLIENT_SECRET}
-  redirect_uri: ${REDIRECT_URI}
+  client_secret: ${CLIENT_SECRET}
+  redirect_uri: ${APP_DOMAIN}${REDIRECT_URI}
   region: ${REGION}
   user_pool_id: ${USER_POOL_ID}
